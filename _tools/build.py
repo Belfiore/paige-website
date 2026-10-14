@@ -127,15 +127,17 @@ INTRO = """<div id="intro" aria-hidden="true">
 """
 
 
-def header(current=None):
+def header(current=None, home="/"):
     lab = lambda s: E(X("root", s, ("header",)))
     svc_cur = ' aria-current="page"' if current == "services" else ""
-    return f"""<a class="skip" href="#main">{lab("Skip to Content")}</a>
-<header class="site-header">
+    home_cur = ' aria-current="page"' if current == "home" else ""
+    return f"""<header class="site-header">
+  <a class="skip" href="#main">{lab("Skip to Content")}</a>
   <div class="header-inner">
-    <a class="brand" href="/"><img src="/assets/img/logo-320.webp" width="62" height="62" alt="Highly Aligned Therapy"></a>
+    <a class="brand" href="{home}"><img src="/assets/img/logo-320.webp" width="62" height="62" alt="Highly Aligned Therapy"></a>
     <nav class="primary-nav" id="primary-nav" aria-label="Primary">
       <ul>
+        <li><a class="nav-link" href="{home}"{home_cur}>Home</a></li>
         <li class="has-sub">
           <a class="nav-link" href="/services/"{svc_cur}>{lab("Services")}</a>
           <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-services" aria-label="Services menu">{CHEV}</button>
@@ -147,7 +149,8 @@ def header(current=None):
             </div>
           </div>
         </li>
-        <li><a class="nav-link" href="/#about" data-open-about>{lab("About")}</a></li>
+        <li><a class="nav-link" href="{home}#about" data-open-about>{lab("About")}</a></li>
+        <li><a class="nav-link" href="/consultation/"{' aria-current="page"' if current == "consult" else ""}>{E(X("root", "WORK WITH ME"))}</a></li>
       </ul>
       <div class="nav-cta-mobile">{grow_btn(X("root", "BOOK A CONSULTATION", ("header",)))}</div>
     </nav>
@@ -158,14 +161,14 @@ def header(current=None):
 """
 
 
-def footer():
+def footer(extra_li="", home="/"):
     return f"""<footer class="site-footer">
   <div class="wrap">
     <a href="/" aria-label="Highly Aligned Therapy — home"><img class="logo-lg" src="/assets/img/logo-512.png" width="184" height="184" alt="" loading="lazy"></a>
     <ul class="footer-links">
-      <li><a href="/#about" data-open-about>{E(X("root", "ABOUT"))}</a></li>
+      <li><a href="{home}#about" data-open-about>{E(X("root", "ABOUT"))}</a></li>
       <li><a href="/consultation/">{E(X("root", "WORK WITH ME"))}</a></li>
-      <li><a href="{A(GROW)}" target="_blank" rel="noopener noreferrer">Grow Therapy{EXT}{NEWTAB}</a></li>
+      <li><a href="{A(GROW)}" target="_blank" rel="noopener noreferrer">Grow Therapy{EXT}{NEWTAB}</a></li>{extra_li}
     </ul>
   </div>
 </footer>
@@ -208,7 +211,7 @@ def home():
         f'          <li><img src="/assets/img/{n}.webp" alt="{A(a)}" width="900" height="900" loading="lazy"></li>' for n, a in tiles)
 
     return head("Highly Aligned Therapy", desc) + f"""<body class="page-home">
-{INTRO}{header()}
+{INTRO}{header("home")}
 <main id="main">
 
   <div class="hero-wrap">
@@ -337,7 +340,7 @@ def home():
   </section>
 
 </main>
-""" + footer()
+""" + footer('<li><a href="/alt/">Try the story version of this page</a></li>')
 
 
 # ---------------------------------------------------------------------------
@@ -466,7 +469,7 @@ def consultation():
                      '     visitors it is not connected, instead of pretending to send. -->\n'
                      '<meta name="inquiry-endpoint" content="">\n')
     return head(clean(_page("consultation")["lines"][0]["text"]), "Consultation Inquiry — send a message to Paige Haile, Florida Licensed Mental Health Counselor.", endpoint_meta) + f"""<body class="page-consultation">
-{INTRO}{header()}
+{INTRO}{header("consult")}
 <main id="main">
   <section class="consult" aria-labelledby="consult-title">
     <div class="sparkles" data-sparkles="9" aria-hidden="true"></div>
@@ -556,6 +559,229 @@ def consultation():
 """ + footer()
 
 
+# ---------------------------------------------------------------------------
+# ALTERNATIVE HOME — the "story" version at /alt/
+# ---------------------------------------------------------------------------
+def _sents(t):
+    parts = re.split(r"(?<=[.!?])\s+", t)
+    assert " ".join(parts) == t
+    return parts
+
+
+def _split_at(t, *markers):
+    out, rest = [], t
+    for m in markers:
+        i = rest.index(m)
+        out.append(rest[:i].strip()); rest = rest[i:]
+    out.append(rest.strip())
+    assert " ".join(out) == t, (out, t)
+    return out
+
+
+def beat(emoji, text, tone="", big=False):
+    cls = "beat" + (" beat--big" if big else "") + (f" tone-{tone}" if tone else "")
+    return (f'<li class="{cls}" data-reveal><span class="emoji" aria-hidden="true">{emoji}</span>'
+            f'<p>{E(text)}</p></li>')
+
+
+def alt_home():
+    p = "root"
+    base = "/alt/"
+    hero_p = _sents(T(p, "You don’t need to have everything")) + _sents(T(p, "If your own mind"))
+    assert len(hero_p) == 7
+    hero_e = [("🌊", "sky", True), ("🧭", "", False), ("🔍", "saffron", False), ("🌙", "sky", False),
+              ("🫶", "coral", False), ("🤝", "", False), ("✨", "saffron", False)]
+    hero_beats = "\n".join("        " + beat(e, t, tone, big) for t, (e, tone, big) in zip(hero_p, hero_e))
+
+    m1 = _split_at(T(p, "Greetings!"), "Based out of")
+    m2 = _sents(T(p, "I blend evidence-based tools"))
+    meet = [("👋", m1[0], "saffron", True), ("📍", m1[1], "sky", False), ("🧰", m2[0], "", False),
+            ("🌱", m2[1], "coral", False), ("🧡", m2[2] + " " + m2[3], "saffron", False)]
+    assert " ".join(x[1] for x in meet[2:]) == T(p, "I blend evidence-based tools")
+    meet_beats = "\n".join("            " + beat(e, t, tone, big) for e, t, tone, big in meet)
+
+    a1, a2, a3 = (_sents(T("about", x)) for x in ("I became a therapist", "I believe that understanding", "I consider myself"))
+    cards = [
+        ("🌱", "Why I became a therapist", [a1[0]], "about-sunset.webp", "Paige on a Gulf-coast beach at sunset, arms raised", "photo"),
+        ("🌤️", "Finding clarity", [a1[1], a1[2]], "tile-mandala-warm.webp", "Crystal mandala in warm tones", "tile"),
+        ("🔥", "Reclaiming your power", [a2[0]], "tile-sunburst.webp", "", "tile"),
+        ("⛰️", "Standing on your story", [a2[1]], "tile-ring.webp", "", "tile"),
+        ("📚", "A lifelong student", [a3[0], a3[1]], "tile-flower.webp", "", "tile"),
+        ("💛", "Unconditional positive regard", [a3[2]], "tile-mandala-blue.webp", "Crystal mandala in blue tones", "tile"),
+    ]
+    assert sum(len(c[2]) for c in cards) == len(a1) + len(a2) + len(a3)
+    cards_html = "\n".join(f"""              <li class="card">
+                <div class="card-visual"><img src="/assets/img/{img}" alt="{A(alt)}" width="900" height="900" loading="lazy"><span class="badge" aria-hidden="true">{em}</span></div>
+                <div class="card-body"><h4>{E(title)}</h4>{''.join(f'<p>{E(x)}</p>' for x in ps)}</div>
+              </li>""" for em, title, ps, img, alt, _ in cards)
+
+    steps = [("awaken", "icon-awaken", "AWAKEN", "Explore the experiences", "Step 1"),
+             ("attune", "icon-attune", "ATTUNE", "Develop a deeper", "Step 2"),
+             ("align", "icon-align", "ALIGN", "Turn self-awareness", "Step 3")]
+    steps_html = "\n".join(f"""        <article class="step step--{k}" data-reveal style="--delay:{i*0.14:.2f}s">
+          <span class="step-num">{n}</span>
+          <img src="/assets/img/{img}.webp" alt="" width="88" height="88" loading="lazy">
+          <h3>{E(X(p, h))}</h3>
+          <p>{E(T(p, start))}</p>
+        </article>""" for i, (k, img, h, start, n) in enumerate(steps))
+
+    therapy_intro = T("therapy", "I believe the therapeutic relationship")
+    reiki_p = T("reiki", "This offering is still")
+    sup_p = T("supervision", "Qualified supervision services")
+    jung = T(p, "“One does not become")
+    desc = T(p, "Greetings!").split(" :)")[0].replace("Greetings! ", "", 1)
+    extra = ('<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/fraunces-latin.woff2" crossorigin>\n'
+             '<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-latin.woff2" crossorigin>\n'
+             '<link rel="stylesheet" href="/assets/css/alt.css">\n')
+
+    return head("Highly Aligned Therapy — story", desc, extra) + f"""<body class="page-alt">
+{INTRO}
+<div class="progress" aria-hidden="true"></div>
+<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now booking therapy.</span>
+  <a href="{A(GROW)}" target="_blank" rel="noopener noreferrer" data-grow>Book on Grow Therapy{EXT}{NEWTAB}</a></div>
+{header("home", base)}
+<main id="main">
+
+  <div class="hero-wrap alt-hero">
+    <div class="hero-media" aria-hidden="true"></div>
+    <section class="hero" aria-label="Welcome">
+      <div class="sparkles" data-sparkles="18" aria-hidden="true"></div>
+      <div class="wrap">
+        <h1 id="hero-title" data-split>{E(T(p, "come as you are"))}</h1>
+        <a class="scroll-hint" href="#chapter-1"><span aria-hidden="true">↓</span>Start reading</a>
+      </div>
+    </section>
+  </div>
+
+  <section class="section chapter" id="chapter-1" aria-labelledby="ch1-title">
+    <div class="wrap">
+      <div class="chapter-head" data-reveal>
+        <span class="kicker">Chapter one</span>
+        <span class="big-emoji" aria-hidden="true">🌊</span>
+        <h2 id="ch1-title">{E(T(p, "come as you are"))}</h2>
+      </div>
+      <ul class="beats">
+{hero_beats}
+      </ul>
+    </div>
+  </section>
+
+  <section class="hero-wrap alt-hero leave-banner" aria-label="Leave as yourself" style="min-height:0">
+    <div class="hero-media" aria-hidden="true" style="background-position:center 92%"></div>
+    <div class="hero-2"><div class="wrap"><h2 data-split>{E(T(p, ". . .Leave as Yourself"))}</h2></div></div>
+  </section>
+
+  <section class="section chapter chapter--sand meet" id="about" aria-labelledby="meet-title">
+    <div class="wrap">
+      <div class="chapter-head" data-reveal>
+        <span class="kicker">Chapter two</span>
+        <span class="big-emoji" aria-hidden="true">👋</span>
+        <h2 id="meet-title">{E(X(p, "meet Paige"))}</h2>
+      </div>
+      <div class="alt-meet-grid">
+        <div class="portrait" data-reveal><img src="/assets/img/paige-portrait.webp" width="1085" height="1450" alt="Paige Haile, smiling, outdoors" loading="lazy"></div>
+        <div>
+          <ul class="beats">
+{meet_beats}
+          </ul>
+          <div class="meet-actions" data-reveal>
+            <button class="acc-trigger" id="about-trigger" type="button" aria-expanded="false" aria-controls="about-panel"><span>{E(X(p, "Learn More"))}</span> <span class="acc-sub">about me</span><span class="acc-icon" aria-hidden="true"></span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-panel" id="about-panel" role="region" aria-label="About Paige">
+        <div class="acc-inner">
+          <div class="about-body stagger">
+            <h3 class="carousel-title" style="--k:0">{E(X(p, "Learn More"))} <em>about me</em></h3>
+            <h3 class="about-title about-cards-title" style="--k:0">{E(T("about", "ABOUT paige"))}</h3>
+            <ul class="cards" id="about-cards" style="--k:1" tabindex="0" aria-label="About Paige, swipe or scroll for more">
+{cards_html}
+            </ul>
+            <div class="carousel-ui" style="--k:2">
+              <p class="swipe-hint" aria-hidden="true"><span>Swipe</span> <span>→</span></p>
+              <div class="dots" role="group" aria-label="Choose a card"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section quote chapter" aria-label="Quote">
+    <div class="wrap">
+      <figure class="paper-card" data-reveal>
+        <img class="bloom" src="/assets/img/bloom-blue.webp" alt="" width="282" height="166" loading="lazy">
+        <blockquote><p class="type-quote" data-type>{E(jung)}</p></blockquote>
+        {STARS}
+        <figcaption>{E(T(p, "— Carl Jung"))}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section journey chapter" aria-labelledby="journey-title">
+    <div class="wrap">
+      <div class="journey-title" data-reveal>
+        <span class="kicker">Chapter three</span>
+        <h2 id="journey-title">{E(X(p, "The Journey"))}</h2>
+        {STARS}
+      </div>
+      <div class="journey-grid">
+{steps_html}
+      </div>
+    </div>
+    <button class="pause-btn" type="button" aria-pressed="false" aria-label="Pause background animation">
+      <svg class="i-pause" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11M11 1.5v11" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <svg class="i-play" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 1.8v10.4L12 7z" fill="currentColor"/></svg>
+    </button>
+  </section>
+
+  <section class="section teasers chapter" aria-labelledby="teasers-title">
+    <div class="wrap">
+      <div class="teasers-head" data-reveal>
+        <div><span class="kicker">Chapter four</span><h2 id="teasers-title">Services</h2></div>
+        <a class="link-arrow" href="/services/">See all services {ARROW}</a>
+      </div>
+      <div class="teaser-grid">
+        <article class="teaser teaser--main" data-reveal>
+          <div><span class="tag">Available now</span></div>
+          <h3><span class="t-emoji" aria-hidden="true">🌿</span> {E(X(p, "Therapy", ("header",)))}</h3>
+          <p>{E(sentences(therapy_intro, 2))}</p>
+          <div class="teaser-links">
+            {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+            <a class="link-arrow" href="/services/#therapy">{E(X(p, "Learn more"))} {ARROW}</a>
+          </div>
+        </article>
+        <article class="teaser teaser--soon" data-reveal style="--delay:.1s">
+          <h3><span class="t-emoji" aria-hidden="true">✨</span> {soon_title(T("reiki", "Reiki Services"))}</h3>
+          <p>{E(sentences(reiki_p, 2))}</p>
+          <div class="teaser-links"><a class="link-arrow" href="/services/#reiki">{E(X(p, "Learn more"))} {ARROW}</a></div>
+        </article>
+        <article class="teaser teaser--soon" data-reveal style="--delay:.2s">
+          <h3><span class="t-emoji" aria-hidden="true">🧭</span> {soon_title(T("supervision", "Qualified Supervision"))}</h3>
+          <p>{E(sentences(sup_p, 2))}</p>
+          <div class="teaser-links"><a class="link-arrow" href="/services/#supervision">{E(X(p, "Learn more"))} {ARROW}</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section closing" aria-labelledby="closing-title">
+    <div class="sparkles" data-sparkles="10" aria-hidden="true"></div>
+    <div class="wrap">
+      <h2 id="closing-title" data-reveal>{E(X(p, "Lets Align."))}</h2>
+      <div class="cta-row" data-reveal style="--delay:.1s">
+        <a class="btn" href="/services/#therapy">{E(X(p, "Learn more"))}</a>
+        {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+      </div>
+      <p class="btn-note" style="margin-inline:auto">Booking opens on Grow Therapy in a new tab.</p>
+    </div>
+  </section>
+
+</main>
+""" + footer('<li><a href="/">See the original home page</a></li>', base)
+
+
 def stub(target, label):
     return f"""<!doctype html>
 <html lang="en-US">
@@ -585,6 +811,7 @@ if __name__ == "__main__":
     write("services/index.html", services())
     write("consultation/index.html", consultation())
     # old Squarespace URLs keep working
+    write("alt/index.html", alt_home())
     write("about/index.html", stub("/#about", "About"))
     write("therapy/index.html", stub("/services/#therapy", "Therapy"))
     write("reiki/index.html", stub("/services/#reiki", "Reiki"))

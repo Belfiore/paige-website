@@ -216,7 +216,7 @@
     if (!trigger || !panel) return;
     trigger.setAttribute("aria-expanded", String(open));
     panel.classList.toggle("open", open);
-    if (open) panel.removeAttribute("inert"); else panel.setAttribute("inert", "");
+    if (open || (hasCarousel && phoneMQ.matches)) panel.removeAttribute("inert"); else panel.setAttribute("inert", "");
     if (open && scroll) {
       setTimeout(() => {
         const top = panel.getBoundingClientRect().top;
@@ -224,8 +224,15 @@
       }, 260);
     }
   }
+  const phoneMQ = matchMedia("(max-width: 720px)");
+  const hasCarousel = !!$("#about-cards");
+  const syncInert = () => {
+    const open = trigger && trigger.getAttribute("aria-expanded") === "true";
+    if (open || (hasCarousel && phoneMQ.matches)) panel.removeAttribute("inert"); else panel.setAttribute("inert", "");
+  };
   if (trigger && panel) {
-    panel.setAttribute("inert", "");
+    syncInert();
+    if (hasCarousel) phoneMQ.addEventListener("change", syncInert);
     trigger.addEventListener("click", () => setAbout(trigger.getAttribute("aria-expanded") !== "true", { scroll: true }));
     const syncHash = () => {
       if (location.hash === "#about") {
@@ -254,6 +261,85 @@
       pauseBtn.setAttribute("aria-pressed", String(paused));
       pauseBtn.setAttribute("aria-label", paused ? "Play background animation" : "Pause background animation");
     });
+  }
+
+
+  /* ------------------------------------------------------------------
+     Story page extras: typing quote · progress bar · announce bar · carousel
+  ------------------------------------------------------------------ */
+  $$("[data-type]").forEach((el) => {
+    const full = el.textContent.trim();
+    if (reduceMotion || !("IntersectionObserver" in window)) return;
+    el.style.minHeight = el.getBoundingClientRect().height + "px";
+    el.textContent = "";
+    const sr = document.createElement("span"); // screen readers get the full quote at once
+    sr.className = "visually-hidden";
+    sr.textContent = full;
+    const live = document.createElement("span");
+    live.setAttribute("aria-hidden", "true");
+    const caret = document.createElement("span");
+    caret.className = "caret";
+    caret.setAttribute("aria-hidden", "true");
+    el.append(sr, live, caret);
+    const io2 = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) return;
+      io2.disconnect();
+      let i = 0;
+      const tick = () => {
+        live.textContent = full.slice(0, ++i);
+        if (i < full.length) {
+          const ch = full[i - 1];
+          setTimeout(tick, /[,.;:—]/.test(ch) ? 260 : 30 + Math.random() * 30);
+        } else {
+          el.classList.add("done");
+          const q = el.closest(".quote");
+          if (q) q.classList.add("typed");
+        }
+      };
+      introDone.then(() => setTimeout(tick, 400));
+    }, { threshold: 0.6 });
+    io2.observe(el);
+  });
+  if (reduceMotion) $$(".quote").forEach((q) => q.classList.add("typed"));
+
+  const bar = $(".progress");
+  if (bar || document.body.classList.contains("page-alt")) {
+    let tk = false;
+    const onScroll = () => {
+      tk = false;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      if (bar) bar.style.transform = "scaleX(" + (max > 0 ? Math.min(1, scrollY / max) : 0).toFixed(4) + ")";
+      document.body.classList.toggle("scrolled", scrollY > 60);
+    };
+    addEventListener("scroll", () => { if (!tk) { tk = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    onScroll();
+  }
+
+  const cardsEl = $("#about-cards");
+  const dotsEl = $(".dots");
+  if (cardsEl && dotsEl) {
+    const cards = $$(".card", cardsEl);
+    cards.forEach((c, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Card " + (i + 1) + " of " + cards.length);
+      b.addEventListener("click", () => {
+        const left = c.offsetLeft - (cardsEl.clientWidth - c.offsetWidth) / 2;
+        cardsEl.scrollTo({ left, behavior: reduceMotion ? "auto" : "smooth" });
+      });
+      dotsEl.appendChild(b);
+    });
+    const dots = $$("button", dotsEl);
+    const mark = () => {
+      const mid = cardsEl.scrollLeft + cardsEl.clientWidth / 2;
+      let best = 0, bd = Infinity;
+      cards.forEach((c, i) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = i; } });
+      dots.forEach((d, i) => d.setAttribute("aria-current", String(i === best)));
+      const hint = $(".swipe-hint");
+      if (hint && cardsEl.scrollLeft > 20) hint.style.opacity = "0";
+    };
+    cardsEl.addEventListener("scroll", () => requestAnimationFrame(mark), { passive: true });
+    mark();
   }
 
   /* ------------------------------------------------------------------

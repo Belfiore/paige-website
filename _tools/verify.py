@@ -39,7 +39,7 @@ MAP = {
 # Squarespace chrome that has no equivalent in a design without a cart / mobile folder drawer
 SQS_CHROME = {"0", "Back", "Folder: Services", "Open Menu Close Menu"}
 
-new_pages = {f: parse(os.path.join(ROOT, f)) for f in {"index.html", "services/index.html", "consultation/index.html"}}
+new_pages = {f: parse(os.path.join(ROOT, f)) for f in {"index.html", "services/index.html", "consultation/index.html", "alt/index.html"}}
 new_text = {f: norm(" ".join(l["text"] for l in p.lines)) for f, p in new_pages.items()}
 # the form-labels live in the consultation page
 form_expected = ["Name", "First Name", "(required)", "Last Name", "Email", "Preferred Day", "Short Message",
@@ -49,14 +49,21 @@ form_expected = ["Name", "First Name", "(required)", "Last Name", "Email", "Pref
 
 fail = False
 print("=" * 72, "\n1. TEXT — original lines found verbatim in the new site\n" + "=" * 72)
-for page, targets in MAP.items():
-    hay = " ".join(new_text[t] for t in targets)
+for page, targets in list(MAP.items()) + [("root", ["alt/index.html"]), ("about", ["alt/index.html"])]:
+    if targets[0].startswith("alt/"):
+        # story page splits paragraphs into chunks with added emoji/labels between them:
+        # drop the added blocks, then the original paragraphs must be intact and in order
+        _all = norm(" ".join(l for pg in MAP for l in orig_lines(pg)))
+        hay = " ".join(norm(l["text"]) for l in new_pages[targets[0]].lines if norm(l["text"]) and norm(l["text"]) in _all)
+    else:
+        hay = " ".join(new_text[t] for t in targets)
     hay_ph = hay + " " + " ".join(" ".join(i.get("placeholder", "") for i in new_pages[t].inputs) for t in targets)
     lines = list(dict.fromkeys(orig_lines(page)))
-    missing = [l for l in lines if l not in hay and l not in SQS_CHROME]
+    full = " ".join(new_text[t] for t in targets)
+    missing = [l for l in lines if l not in hay and l not in SQS_CHROME and (len(l) > 60 or l not in full)]
     skipped = [l for l in lines if l in SQS_CHROME]
     ok = len(lines) - len(missing) - len(skipped)
-    print(f"{page:12s} {ok:3d}/{len(lines) - len(skipped)} lines verbatim" + (f"   (+{len(skipped)} Squarespace-only UI strings skipped)" if skipped else ""))
+    print(f"{page:12s} {targets[0][:10]:10s} {ok:3d}/{len(lines) - len(skipped)} lines verbatim" + (f"   (+{len(skipped)} Squarespace-only UI strings skipped)" if skipped else ""))
     for m in missing:
         fail = True; print("   MISSING:", m[:140])
 # nav words that Squarespace combined into one string
