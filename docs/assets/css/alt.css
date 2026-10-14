@@ -24,20 +24,7 @@ body.page-alt {
 .page-alt .menu-toggle { text-transform: none; }
 .page-alt em, .page-alt .it { font-family: var(--font-head); font-style: italic; font-weight: 400; }
 
-/* ---------- Announcement bar (Grow link at the very top) ---------- */
-.announce {
-  position: fixed; z-index: 600; top: 0; left: 0; right: 0; min-height: 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-  gap: 4px 14px; padding: 6px 16px; background: var(--ink); color: var(--cream); font: 600 0.92rem / 1.3 var(--font-mono); text-align: center;
-  transition: transform 0.5s var(--ease);
-}
-.announce a { color: var(--butter); text-underline-offset: 0.25em; display: inline-flex; align-items: center; gap: 0.4em; min-height: 28px; }
-.announce a:hover { color: #fff; }
-.announce .ext { width: 0.85em; height: 0.85em; }
-.announce .pulse-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--saffron); animation: ping 2.4s ease-out infinite; }
-@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(247, 172, 90, 0.7); } 70%, 100% { box-shadow: 0 0 0 10px rgba(247, 172, 90, 0); } }
-.page-alt .site-header { top: 52px; transition: transform 0.6s var(--ease), opacity 0.6s var(--ease), top 0.5s var(--ease); }
-.page-alt.scrolled .site-header { top: 12px; }
-.page-alt.scrolled .announce { transform: translateY(-100%); }
+/* ---------- Progress ---------- */
 .progress { position: fixed; z-index: 700; top: 0; left: 0; height: 4px; width: 100%; transform-origin: left; transform: scaleX(0); background: linear-gradient(90deg, var(--saffron), var(--coral)); }
 
 /* ---------- Hero ---------- */
@@ -171,7 +158,6 @@ body.page-alt {
   .alt-meet-grid .portrait { position: static; }
   .beats::before { left: 27px; transform: none; }
   .beat, .beat:nth-child(even), .beat:nth-child(odd) { justify-self: stretch; width: 100%; }
-  .page-alt .site-header { top: 56px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .announce .pulse-dot, .scroll-hint span, .chapter-head .big-emoji, .step img, .btn--solid, .swipe-hint span { animation: none !important; }
@@ -180,3 +166,85 @@ body.page-alt {
 /* italic overhang: keep the reveal mask from clipping letter tails */
 .page-alt .w { padding-inline: 0.06em 0.16em; margin-inline: -0.06em -0.16em; }
 .page-alt .chapter, .page-alt main { overflow-x: clip; }
+
+/* ==========================================================================
+   Round 2 — clearer hero, joined panels, no emoji, frosted "liquid glass"
+   ========================================================================== */
+.glass {
+  background: rgba(251, 249, 244, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.75); border-radius: var(--blob);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(54, 48, 42, 0.06), 0 28px 50px -30px rgba(54, 48, 42, 0.5);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgba(255, 255, 255, 0.46); -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6); }
+}
+/* moving colour blobs that the glass blurs */
+.glass-bg { position: relative; isolation: isolate; overflow: hidden; }
+.glass-bg::before {
+  content: ""; position: absolute; inset: -15%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(36% 40% at 14% 22%, rgba(184, 208, 224, 0.85), transparent 70%),
+    radial-gradient(34% 42% at 88% 30%, rgba(247, 172, 90, 0.55), transparent 70%),
+    radial-gradient(40% 46% at 70% 90%, rgba(249, 88, 56, 0.22), transparent 72%),
+    radial-gradient(38% 40% at 22% 85%, rgba(255, 227, 150, 0.7), transparent 70%);
+  filter: blur(18px); animation: drift 24s ease-in-out infinite alternate;
+}
+.glass-bg[data-paused]::before { animation-play-state: paused; }
+
+/* ---------- Hero: headline lockup + framed shoreline ---------- */
+.a-hero { position: relative; isolation: isolate; overflow: hidden; padding: calc(var(--header-h) + 28px) 0 clamp(56px, 8vw, 110px); min-height: min(100svh, 920px); display: grid; align-items: center; }
+.a-hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+.a-hero h1 { margin: 0; font-size: clamp(3.2rem, 7.6vw, 6.6rem); line-height: 0.98; letter-spacing: -0.035em; }
+.a-hero .leave { margin: 0.25em 0 0; font-family: var(--font-head); font-style: italic; font-weight: 400; font-size: clamp(2rem, 4.6vw, 3.7rem); line-height: 1.05; color: var(--tan-deep); letter-spacing: -0.02em; }
+.a-hero .rule { width: 90px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--saffron), var(--coral)); margin: clamp(22px, 3vw, 34px) 0; }
+.a-hero .cta-row { justify-content: flex-start; }
+.a-hero-art { position: relative; justify-self: center; width: min(100%, 440px); }
+.a-hero-art .arch {
+  aspect-ratio: 4 / 5.2; border-radius: 999px 999px 32px 32px; border: 1.5px solid var(--ink); box-shadow: 10px 10px 0 var(--gold);
+  background: var(--sand) url("../img/shore-pebbles.webp") 56% 50% / cover no-repeat; transform: rotate(1.2deg);
+}
+.a-hero-art .orb { position: absolute; border-radius: 50%; filter: blur(0.5px); animation: float 7s ease-in-out infinite; }
+.a-hero-art .orb--a { width: 74px; height: 74px; left: -26px; top: 18%; background: var(--saffron); border: 1.5px solid var(--ink); }
+.a-hero-art .orb--b { width: 46px; height: 46px; right: -14px; bottom: 16%; background: var(--sky); border: 1.5px solid var(--ink); animation-delay: -3s; }
+.a-hero-art .tilt-chip { position: absolute; left: -18px; bottom: 9%; padding: 0.7em 1.1em; font: 800 0.85rem / 1.2 var(--font-mono); border-radius: 18px; }
+.a-hero-art .tilt-chip strong { font-family: var(--font-head); font-size: 1.05rem; font-weight: 600; display: block; letter-spacing: -0.01em; }
+
+/* ---------- Joined story panels (one per paragraph) ---------- */
+.panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2.6vw, 32px); align-items: stretch; }
+.panels--stack { grid-template-columns: 1fr; }
+.panel { position: relative; padding: clamp(24px, 3.4vw, 44px); transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+.panel:hover { transform: translateY(-4px); }
+.panel-num { display: block; margin-bottom: 0.9rem; font-family: var(--font-head); font-style: italic; font-size: 1.1rem; color: var(--tan-deep); }
+.panel-num::after { content: ""; display: inline-block; width: 44px; height: 1.5px; margin-left: 0.7em; vertical-align: middle; background: var(--gold); }
+.panel .lead { margin: 0 0 0.9em; max-width: none; font-family: var(--font-head); font-weight: 500; font-size: clamp(1.35rem, 2.3vw, 1.85rem); line-height: 1.3; letter-spacing: -0.012em; }
+.panel p:not(.lead) { margin: 0; max-width: none; font-size: clamp(1rem, 1.3vw, 1.1rem); line-height: 1.75; color: var(--bark); }
+.panel--accent { border-color: rgba(54, 48, 42, 0.18); }
+
+.chapter-head .kicker { background: rgba(255, 255, 255, 0.55); border-color: rgba(54, 48, 42, 0.5); }
+.chapter-head h2 { margin-top: 0; }
+.alt-meet-grid .panels { grid-template-columns: 1fr; }
+
+/* ---------- Cards: numbered, no emoji ---------- */
+.card.glass { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 24px 44px -28px rgba(54, 48, 42, 0.5); border-color: rgba(54, 48, 42, 0.22); }
+.card-visual { border-bottom-color: rgba(54, 48, 42, 0.18); }
+.card-visual .badge { font: italic 500 1.15rem var(--font-head); background: rgba(255, 255, 255, 0.7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.85); }
+.card:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 30px 50px -26px rgba(54, 48, 42, 0.55); }
+
+/* ---------- Journey steps & service cards as glass ---------- */
+.journey .step { padding: clamp(22px, 3vw, 36px) clamp(18px, 2vw, 28px); }
+.journey .glass { background: rgba(255, 255, 255, 0.34); }
+.teasers { position: relative; isolation: isolate; overflow: hidden; }
+.teaser { border-width: 1px; border-color: rgba(54, 48, 42, 0.35); }
+.teaser.glass { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 26px 44px -30px rgba(54, 48, 42, 0.5); }
+.teaser--main.glass { background: rgba(255, 227, 150, 0.62); }
+.teaser--soon.glass { border-style: dashed; }
+.page-alt .teaser h3 { font-size: clamp(1.45rem, 2.4vw, 1.95rem); }
+.page-alt .quote .paper-card { background: rgba(255, 255, 255, 0.55); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border-color: rgba(255, 255, 255, 0.8); }
+
+@media (max-width: 900px) {
+  .a-hero-grid { grid-template-columns: 1fr; }
+  .a-hero-art { width: min(78%, 340px); order: -1; margin-bottom: 8px; }
+  .a-hero { padding-top: calc(var(--header-h) + 8px); min-height: 0; }
+  .panels { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .glass-bg::before, .a-hero-art .orb { animation: none !important; } }

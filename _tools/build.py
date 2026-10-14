@@ -131,24 +131,16 @@ def header(current=None, home="/"):
     lab = lambda s: E(X("root", s, ("header",)))
     svc_cur = ' aria-current="page"' if current == "services" else ""
     home_cur = ' aria-current="page"' if current == "home" else ""
-    return f"""<header class="site-header">
+    return f"""<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now booking therapy.</span>
+  <a href="{A(GROW)}" target="_blank" rel="noopener noreferrer" data-grow>Book on Grow Therapy{EXT}{NEWTAB}</a></div>
+<header class="site-header">
   <a class="skip" href="#main">{lab("Skip to Content")}</a>
   <div class="header-inner">
     <a class="brand" href="{home}"><img src="/assets/img/logo-320.webp" width="62" height="62" alt="Highly Aligned Therapy"></a>
     <nav class="primary-nav" id="primary-nav" aria-label="Primary">
       <ul>
         <li><a class="nav-link" href="{home}"{home_cur}>Home</a></li>
-        <li class="has-sub">
-          <a class="nav-link" href="/services/"{svc_cur}>{lab("Services")}</a>
-          <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-services" aria-label="Services menu">{CHEV}</button>
-          <div class="sub" id="sub-services">
-            <div class="sub-panel">
-              <a href="/services/#therapy">{lab("Therapy")}</a>
-              <a href="/services/#reiki">{lab("Reiki")}</a>
-              <a href="/services/#supervision">{lab("Qualified Supervision")}</a>
-            </div>
-          </div>
-        </li>
+        <li><a class="nav-link" href="/services/"{svc_cur}>{lab("Services")}</a></li>
         <li><a class="nav-link" href="{home}#about" data-open-about>{lab("About")}</a></li>
         <li><a class="nav-link" href="/consultation/"{' aria-current="page"' if current == "consult" else ""}>{E(X("root", "WORK WITH ME"))}</a></li>
       </ul>
@@ -210,7 +202,7 @@ def home():
     tiles_html = "\n".join(
         f'          <li><img src="/assets/img/{n}.webp" alt="{A(a)}" width="900" height="900" loading="lazy"></li>' for n, a in tiles)
 
-    return head("Highly Aligned Therapy", desc) + f"""<body class="page-home">
+    return head("Highly Aligned Therapy", desc) + f"""<body class="has-announce page-home">
 {INTRO}{header("home")}
 <main id="main">
 
@@ -362,7 +354,7 @@ def services():
         </article>""" for i, (h, s, b, url) in enumerate(cards))
 
     desc = sentences(T(t, "I believe the therapeutic relationship"), 1)
-    return head("Services — Highly Aligned Therapy", desc) + f"""<body class="page-services">
+    return head("Services — Highly Aligned Therapy", desc) + f"""<body class="has-announce page-services">
 {INTRO}{header("services")}
 <main id="main">
 
@@ -370,13 +362,16 @@ def services():
     <div class="sparkles" data-sparkles="10" aria-hidden="true"></div>
     <div class="wrap">
       <h1 id="services-title" data-split>Services</h1>
-      <ul class="chips" aria-label="Jump to a service" data-reveal>
-        <li><a href="#therapy"><span class="dot" aria-hidden="true"></span>{E(X("root", "Therapy", ("header",)))}</a></li>
-        <li><a href="#reiki"><span class="dot dot--soon" aria-hidden="true"></span>{E(X("root", "Reiki", ("header",)))}<span class="visually-hidden"> — coming soon</span></a></li>
-        <li><a href="#supervision"><span class="dot dot--soon" aria-hidden="true"></span>{E(X("root", "Qualified Supervision", ("header",)))}<span class="visually-hidden"> — coming soon</span></a></li>
-      </ul>
     </div>
   </section>
+
+  <nav class="service-tabs" aria-label="Jump to a service">
+    <ul>
+      <li><a href="#therapy" aria-current="true"><span class="dot" aria-hidden="true"></span>{E(X("root", "Therapy", ("header",)))}</a></li>
+      <li><a href="#reiki"><span class="dot dot--soon" aria-hidden="true"></span>{E(X("root", "Reiki", ("header",)))}<span class="visually-hidden"> — coming soon</span></a></li>
+      <li><a href="#supervision"><span class="dot dot--soon" aria-hidden="true"></span>{E(X("root", "Qualified Supervision", ("header",)))}<span class="visually-hidden"> — coming soon</span></a></li>
+    </ul>
+  </nav>
 
   <section class="service section" id="therapy" aria-labelledby="therapy-title" style="padding-top:clamp(24px,4vw,48px)">
     <div class="wrap">
@@ -468,7 +463,7 @@ def consultation():
     endpoint_meta = ('<!-- Set content to your form service URL (e.g. https://formspree.io/f/xxxxxxxx). While it is empty the form tells\n'
                      '     visitors it is not connected, instead of pretending to send. -->\n'
                      '<meta name="inquiry-endpoint" content="">\n')
-    return head(clean(_page("consultation")["lines"][0]["text"]), "Consultation Inquiry — send a message to Paige Haile, Florida Licensed Mental Health Counselor.", endpoint_meta) + f"""<body class="page-consultation">
+    return head(clean(_page("consultation")["lines"][0]["text"]), "Consultation Inquiry — send a message to Paige Haile, Florida Licensed Mental Health Counselor.", endpoint_meta) + f"""<body class="has-announce page-consultation">
 {INTRO}{header("consult")}
 <main id="main">
   <section class="consult" aria-labelledby="consult-title">
@@ -578,47 +573,44 @@ def _split_at(t, *markers):
     return out
 
 
-def beat(emoji, text, tone="", big=False):
-    cls = "beat" + (" beat--big" if big else "") + (f" tone-{tone}" if tone else "")
-    return (f'<li class="{cls}" data-reveal><span class="emoji" aria-hidden="true">{emoji}</span>'
-            f'<p>{E(text)}</p></li>')
+def panel(num, lead, rest, cls=""):
+    body = f"<p>{E(rest)}</p>" if rest else ""
+    return (f'<article class="panel glass {cls}" data-reveal><span class="panel-num">{num}</span>'
+            f'<p class="lead">{E(lead)}</p>{body}</article>')
 
 
 def alt_home():
     p = "root"
     base = "/alt/"
-    hero_p = _sents(T(p, "You don’t need to have everything")) + _sents(T(p, "If your own mind"))
-    assert len(hero_p) == 7
-    hero_e = [("🌊", "sky", True), ("🧭", "", False), ("🔍", "saffron", False), ("🌙", "sky", False),
-              ("🫶", "coral", False), ("🤝", "", False), ("✨", "saffron", False)]
-    hero_beats = "\n".join("        " + beat(e, t, tone, big) for t, (e, tone, big) in zip(hero_p, hero_e))
+    h1 = _sents(T(p, "You don’t need to have everything"))
+    h2 = _sents(T(p, "If your own mind"))
+    hero_panels = "\n".join("        " + x for x in (
+        panel("01", h1[0], " ".join(h1[1:])), panel("02", h2[0], " ".join(h2[1:]))))
 
     m1 = _split_at(T(p, "Greetings!"), "Based out of")
     m2 = _sents(T(p, "I blend evidence-based tools"))
-    meet = [("👋", m1[0], "saffron", True), ("📍", m1[1], "sky", False), ("🧰", m2[0], "", False),
-            ("🌱", m2[1], "coral", False), ("🧡", m2[2] + " " + m2[3], "saffron", False)]
-    assert " ".join(x[1] for x in meet[2:]) == T(p, "I blend evidence-based tools")
-    meet_beats = "\n".join("            " + beat(e, t, tone, big) for e, t, tone, big in meet)
+    meet_panels = "\n".join("          " + x for x in (
+        panel("01", m1[0], m1[1]), panel("02", m2[0], " ".join(m2[1:]))))
 
     a1, a2, a3 = (_sents(T("about", x)) for x in ("I became a therapist", "I believe that understanding", "I consider myself"))
     cards = [
-        ("🌱", "Why I became a therapist", [a1[0]], "about-sunset.webp", "Paige on a Gulf-coast beach at sunset, arms raised", "photo"),
-        ("🌤️", "Finding clarity", [a1[1], a1[2]], "tile-mandala-warm.webp", "Crystal mandala in warm tones", "tile"),
-        ("🔥", "Reclaiming your power", [a2[0]], "tile-sunburst.webp", "", "tile"),
-        ("⛰️", "Standing on your story", [a2[1]], "tile-ring.webp", "", "tile"),
-        ("📚", "A lifelong student", [a3[0], a3[1]], "tile-flower.webp", "", "tile"),
-        ("💛", "Unconditional positive regard", [a3[2]], "tile-mandala-blue.webp", "Crystal mandala in blue tones", "tile"),
+        ("01", "Why I became a therapist", [a1[0]], "about-sunset.webp", "Paige on a Gulf-coast beach at sunset, arms raised"),
+        ("02", "Finding clarity", [a1[1], a1[2]], "tile-mandala-warm.webp", "Crystal mandala in warm tones"),
+        ("03", "Reclaiming your power", [a2[0]], "tile-sunburst.webp", ""),
+        ("04", "Standing on your story", [a2[1]], "tile-ring.webp", ""),
+        ("05", "A lifelong student", [a3[0], a3[1]], "tile-flower.webp", ""),
+        ("06", "Unconditional positive regard", [a3[2]], "tile-mandala-blue.webp", "Crystal mandala in blue tones"),
     ]
     assert sum(len(c[2]) for c in cards) == len(a1) + len(a2) + len(a3)
-    cards_html = "\n".join(f"""              <li class="card">
-                <div class="card-visual"><img src="/assets/img/{img}" alt="{A(alt)}" width="900" height="900" loading="lazy"><span class="badge" aria-hidden="true">{em}</span></div>
+    cards_html = "\n".join(f"""              <li class="card glass">
+                <div class="card-visual"><img src="/assets/img/{img}" alt="{A(alt)}" width="900" height="900" loading="lazy"><span class="badge" aria-hidden="true">{n}</span></div>
                 <div class="card-body"><h4>{E(title)}</h4>{''.join(f'<p>{E(x)}</p>' for x in ps)}</div>
-              </li>""" for em, title, ps, img, alt, _ in cards)
+              </li>""" for n, title, ps, img, alt in cards)
 
     steps = [("awaken", "icon-awaken", "AWAKEN", "Explore the experiences", "Step 1"),
              ("attune", "icon-attune", "ATTUNE", "Develop a deeper", "Step 2"),
              ("align", "icon-align", "ALIGN", "Turn self-awareness", "Step 3")]
-    steps_html = "\n".join(f"""        <article class="step step--{k}" data-reveal style="--delay:{i*0.14:.2f}s">
+    steps_html = "\n".join(f"""        <article class="step glass step--{k}" data-reveal style="--delay:{i*0.14:.2f}s">
           <span class="step-num">{n}</span>
           <img src="/assets/img/{img}.webp" alt="" width="88" height="88" loading="lazy">
           <h3>{E(X(p, h))}</h3>
@@ -634,56 +626,54 @@ def alt_home():
              '<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-latin.woff2" crossorigin>\n'
              '<link rel="stylesheet" href="/assets/css/alt.css">\n')
 
-    return head("Highly Aligned Therapy — story", desc, extra) + f"""<body class="page-alt">
+    return head("Highly Aligned Therapy — story", desc, extra) + f"""<body class="has-announce page-alt">
 {INTRO}
 <div class="progress" aria-hidden="true"></div>
-<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now booking therapy.</span>
-  <a href="{A(GROW)}" target="_blank" rel="noopener noreferrer" data-grow>Book on Grow Therapy{EXT}{NEWTAB}</a></div>
 {header("home", base)}
 <main id="main">
 
-  <div class="hero-wrap alt-hero">
-    <div class="hero-media" aria-hidden="true"></div>
-    <section class="hero" aria-label="Welcome">
-      <div class="sparkles" data-sparkles="18" aria-hidden="true"></div>
-      <div class="wrap">
+  <section class="a-hero glass-bg" aria-label="Welcome">
+    <div class="sparkles" data-sparkles="16" aria-hidden="true"></div>
+    <div class="wrap a-hero-grid">
+      <div class="a-hero-copy">
         <h1 id="hero-title" data-split>{E(T(p, "come as you are"))}</h1>
-        <a class="scroll-hint" href="#chapter-1"><span aria-hidden="true">↓</span>Start reading</a>
+        <h2 class="leave" data-split>{E(T(p, ". . .Leave as Yourself"))}</h2>
+        <div class="rule" aria-hidden="true"></div>
+        <div class="cta-row">
+          {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+          <a class="btn" href="#chapter-1">Start reading</a>
+        </div>
       </div>
-    </section>
-  </div>
-
-  <section class="section chapter" id="chapter-1" aria-labelledby="ch1-title">
-    <div class="wrap">
-      <div class="chapter-head" data-reveal>
-        <span class="kicker">Chapter one</span>
-        <span class="big-emoji" aria-hidden="true">🌊</span>
-        <h2 id="ch1-title">{E(T(p, "come as you are"))}</h2>
+      <div class="a-hero-art" aria-hidden="true">
+        <div class="arch"></div><span class="orb orb--a"></span><span class="orb orb--b"></span>
       </div>
-      <ul class="beats">
-{hero_beats}
-      </ul>
     </div>
   </section>
 
-  <section class="hero-wrap alt-hero leave-banner" aria-label="Leave as yourself" style="min-height:0">
-    <div class="hero-media" aria-hidden="true" style="background-position:center 92%"></div>
-    <div class="hero-2"><div class="wrap"><h2 data-split>{E(T(p, ". . .Leave as Yourself"))}</h2></div></div>
+  <section class="section chapter glass-bg" id="chapter-1" aria-labelledby="ch1-title">
+    <div class="wrap">
+      <div class="chapter-head" data-reveal>
+        <span class="kicker">Chapter one</span>
+        <h2 id="ch1-title">{E(T(p, "come as you are"))}</h2>
+      </div>
+      <div class="panels">
+{hero_panels}
+      </div>
+    </div>
   </section>
 
-  <section class="section chapter chapter--sand meet" id="about" aria-labelledby="meet-title">
+  <section class="section chapter glass-bg meet" id="about" aria-labelledby="meet-title">
     <div class="wrap">
       <div class="chapter-head" data-reveal>
         <span class="kicker">Chapter two</span>
-        <span class="big-emoji" aria-hidden="true">👋</span>
         <h2 id="meet-title">{E(X(p, "meet Paige"))}</h2>
       </div>
       <div class="alt-meet-grid">
         <div class="portrait" data-reveal><img src="/assets/img/paige-portrait.webp" width="1085" height="1450" alt="Paige Haile, smiling, outdoors" loading="lazy"></div>
         <div>
-          <ul class="beats">
-{meet_beats}
-          </ul>
+          <div class="panels panels--stack">
+{meet_panels}
+          </div>
           <div class="meet-actions" data-reveal>
             <button class="acc-trigger" id="about-trigger" type="button" aria-expanded="false" aria-controls="about-panel"><span>{E(X(p, "Learn More"))}</span> <span class="acc-sub">about me</span><span class="acc-icon" aria-hidden="true"></span></button>
           </div>
@@ -736,29 +726,29 @@ def alt_home():
     </button>
   </section>
 
-  <section class="section teasers chapter" aria-labelledby="teasers-title">
+  <section class="section teasers chapter glass-bg" aria-labelledby="teasers-title">
     <div class="wrap">
       <div class="teasers-head" data-reveal>
         <div><span class="kicker">Chapter four</span><h2 id="teasers-title">Services</h2></div>
         <a class="link-arrow" href="/services/">See all services {ARROW}</a>
       </div>
       <div class="teaser-grid">
-        <article class="teaser teaser--main" data-reveal>
+        <article class="teaser teaser--main glass" data-reveal>
           <div><span class="tag">Available now</span></div>
-          <h3><span class="t-emoji" aria-hidden="true">🌿</span> {E(X(p, "Therapy", ("header",)))}</h3>
+          <h3>{E(X(p, "Therapy", ("header",)))}</h3>
           <p>{E(sentences(therapy_intro, 2))}</p>
           <div class="teaser-links">
             {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
             <a class="link-arrow" href="/services/#therapy">{E(X(p, "Learn more"))} {ARROW}</a>
           </div>
         </article>
-        <article class="teaser teaser--soon" data-reveal style="--delay:.1s">
-          <h3><span class="t-emoji" aria-hidden="true">✨</span> {soon_title(T("reiki", "Reiki Services"))}</h3>
+        <article class="teaser teaser--soon glass" data-reveal style="--delay:.1s">
+          <h3>{soon_title(T("reiki", "Reiki Services"))}</h3>
           <p>{E(sentences(reiki_p, 2))}</p>
           <div class="teaser-links"><a class="link-arrow" href="/services/#reiki">{E(X(p, "Learn more"))} {ARROW}</a></div>
         </article>
-        <article class="teaser teaser--soon" data-reveal style="--delay:.2s">
-          <h3><span class="t-emoji" aria-hidden="true">🧭</span> {soon_title(T("supervision", "Qualified Supervision"))}</h3>
+        <article class="teaser teaser--soon glass" data-reveal style="--delay:.2s">
+          <h3>{soon_title(T("supervision", "Qualified Supervision"))}</h3>
           <p>{E(sentences(sup_p, 2))}</p>
           <div class="teaser-links"><a class="link-arrow" href="/services/#supervision">{E(X(p, "Learn more"))} {ARROW}</a></div>
         </article>

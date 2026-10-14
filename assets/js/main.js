@@ -303,7 +303,7 @@
   if (reduceMotion) $$(".quote").forEach((q) => q.classList.add("typed"));
 
   const bar = $(".progress");
-  if (bar || document.body.classList.contains("page-alt")) {
+  if (bar || $(".announce")) {
     let tk = false;
     const onScroll = () => {
       tk = false;
@@ -313,6 +313,18 @@
     };
     addEventListener("scroll", () => { if (!tk) { tk = true; requestAnimationFrame(onScroll); } }, { passive: true });
     onScroll();
+  }
+
+
+  /* Pinned Services tabs: highlight the section you're reading */
+  const tabLinks = $$(".service-tabs a");
+  if (tabLinks.length && "IntersectionObserver" in window) {
+    const secs = tabLinks.map((a) => $(a.getAttribute("href"))).filter(Boolean);
+    const setCur = (id) => tabLinks.forEach((a) => { if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) setCur(e.target.id); });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    secs.forEach((el) => spy.observe(el));
   }
 
   const cardsEl = $("#about-cards");

@@ -18,7 +18,7 @@
 <script>(function(d){d.classList.add('js');try{if(!sessionStorage.getItem('hat-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('intro-pending');setTimeout(function(){d.classList.remove('intro-pending')},7000)}}catch(e){}})(document.documentElement)</script>
 <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
-<body class="page-home">
+<body class="has-announce page-home">
 <div id="intro" aria-hidden="true">
   <div class="intro-stage">
     <div class="intro-orbit"></div>
@@ -26,6 +26,8 @@
   </div>
   <p class="intro-skip">Tap to skip</p>
 </div>
+<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now booking therapy.</span>
+  <a href="https://growtherapy.com/book-appointment?prsid=oq1cmlyoxaaf&amp;ref=grow&amp;setting=Virtual&amp;insuranceId=&amp;state=&amp;cusid=" target="_blank" rel="noopener noreferrer" data-grow>Book on Grow Therapy<svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a></div>
 <header class="site-header">
   <a class="skip" href="#main">Skip to Content</a>
   <div class="header-inner">
@@ -33,17 +35,7 @@
     <nav class="primary-nav" id="primary-nav" aria-label="Primary">
       <ul>
         <li><a class="nav-link" href="/" aria-current="page">Home</a></li>
-        <li class="has-sub">
-          <a class="nav-link" href="/services/">Services</a>
-          <button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-services" aria-label="Services menu"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m2 4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="sub" id="sub-services">
-            <div class="sub-panel">
-              <a href="/services/#therapy">Therapy</a>
-              <a href="/services/#reiki">Reiki</a>
-              <a href="/services/#supervision">Qualified Supervision</a>
-            </div>
-          </div>
-        </li>
+        <li><a class="nav-link" href="/services/">Services</a></li>
         <li><a class="nav-link" href="/#about" data-open-about>About</a></li>
         <li><a class="nav-link" href="/consultation/">WORK WITH ME</a></li>
       </ul>
