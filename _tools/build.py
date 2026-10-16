@@ -82,6 +82,14 @@ NEWTAB = '<span class="visually-hidden"> (opens in a new tab)</span>'
 STARS = '<div class="star-row" aria-hidden="true">' + "<i></i>" * 11 + "</div>"
 
 
+ARR_BTN = '<svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+
+
+def inquire_btn(label="Inquire", extra_cls="btn--solid"):
+    """Primary CTA: goes to the inquiry form (consultation first, private-pay friendly)."""
+    return f'<a class="btn {extra_cls}" href="/consultation/"><span>{E(label)}</span>{ARR_BTN}</a>'
+
+
 def grow_btn(label, extra_cls="btn--solid"):
     return (f'<a class="btn {extra_cls}" data-grow href="{A(GROW)}" target="_blank" rel="noopener noreferrer">'
             f'<span>{E(label)}</span>{EXT}{NEWTAB}</a>')
@@ -131,8 +139,8 @@ def header(current=None, home="/"):
     lab = lambda s: E(X("root", s, ("header",)))
     svc_cur = ' aria-current="page"' if current == "services" else ""
     home_cur = ' aria-current="page"' if current == "home" else ""
-    return f"""<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now booking therapy.</span>
-  <a href="{A(GROW)}" target="_blank" rel="noopener noreferrer" data-grow>Book on Grow Therapy{EXT}{NEWTAB}</a></div>
+    return f"""<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now accepting new clients</span>
+  <a href="/consultation/">Inquire →</a></div>
 <header class="site-header">
   <a class="skip" href="#main">{lab("Skip to Content")}</a>
   <div class="header-inner">
@@ -144,9 +152,9 @@ def header(current=None, home="/"):
         <li><a class="nav-link" href="{home}#about" data-open-about>{lab("About")}</a></li>
         <li><a class="nav-link" href="/consultation/"{' aria-current="page"' if current == "consult" else ""}>{E(X("root", "WORK WITH ME"))}</a></li>
       </ul>
-      <div class="nav-cta-mobile">{grow_btn(X("root", "BOOK A CONSULTATION", ("header",)))}</div>
+      <div class="nav-cta-mobile">{inquire_btn()}</div>
     </nav>
-    {grow_btn(X("root", "BOOK A CONSULTATION", ("header",))).replace('class="btn btn--solid"', 'class="btn btn--solid header-cta"')}
+    {inquire_btn().replace('class="btn btn--solid"', 'class="btn btn--solid header-cta"')}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"><span class="bars" aria-hidden="true"></span><span class="menu-label">Open Menu</span></button>
   </div>
 </header>
@@ -159,8 +167,7 @@ def footer(extra_li="", home="/"):
     <a href="/" aria-label="Highly Aligned Therapy — home"><img class="logo-lg" src="/assets/img/logo-512.png" width="184" height="184" alt="" loading="lazy"></a>
     <ul class="footer-links">
       <li><a href="{home}#about" data-open-about>{E(X("root", "ABOUT"))}</a></li>
-      <li><a href="/consultation/">{E(X("root", "WORK WITH ME"))}</a></li>
-      <li><a href="{A(GROW)}" target="_blank" rel="noopener noreferrer">Grow Therapy{EXT}{NEWTAB}</a></li>{extra_li}
+      <li><a href="/consultation/">{E(X("root", "WORK WITH ME"))}</a></li>{extra_li}
     </ul>
   </div>
 </footer>
@@ -301,7 +308,7 @@ def home():
           <h3>{E(X(p, "Therapy", ("header",)))}</h3>
           <p>{E(sentences(therapy_intro, 2))}</p>
           <div class="teaser-links">
-            {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+            {inquire_btn()}
             <a class="link-arrow" href="/services/#therapy">{E(X(p, "Learn more"))} {ARROW}</a>
           </div>
         </article>
@@ -325,9 +332,9 @@ def home():
       <h2 id="closing-title" data-reveal>{E(X(p, "Lets Align."))}</h2>
       <div class="cta-row" data-reveal style="--delay:.1s">
         <a class="btn" href="/services/#therapy">{E(X(p, "Learn more"))}</a>
-        {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+        {inquire_btn()}
       </div>
-      <p class="btn-note" style="margin-inline:auto">Booking opens on Grow Therapy in a new tab.</p>
+      <p class="btn-note" style="margin-inline:auto">Share a few details and I’ll be in touch.</p>
     </div>
   </section>
 
@@ -343,14 +350,19 @@ def services():
     r_title = T("reiki", "Reiki Services")
     s_title = T("supervision", "Qualified Supervision")
     cards = [
-        ("private pay", "Therapy sessions are 60 minutes", "Book Session", PAY_GROW),
+        ("private pay", "Therapy sessions are 60 minutes", "Inquire about private pay", "/consultation/"),
         ("Aetna & Cigna", "Use Headway", "Book with Aetna or Cigna", PAY_HEADWAY),
         ("Florida Blue & United Healthcare", "Use Grow Therapy", "Book with Florida Blue or United", PAY_FLBLUE),
     ]
+    def pay_btn(t, b, url):
+        if url.startswith("/"):   # private pay -> our own inquiry form
+            return f'<a class="btn btn--solid" href="{A(url)}"><span>{E(b)}</span>{ARR_BTN}</a>'
+        return f'<a class="btn" href="{A(url)}" target="_blank" rel="noopener noreferrer"><span>{E(X(t, b))}</span>{EXT}{NEWTAB}</a>'
+
     pay = "\n".join(f"""        <article class="pay-card" data-reveal style="--delay:{i*0.1:.1f}s">
           <h3>{E(X(t, h))}</h3>
           <p>{E(T(t, s))}</p>
-          <a class="btn" href="{A(url)}" target="_blank" rel="noopener noreferrer"><span>{E(X(t, b))}</span>{EXT}{NEWTAB}</a>
+          {pay_btn(t, b, url)}
         </article>""" for i, (h, s, b, url) in enumerate(cards))
 
     desc = sentences(T(t, "I believe the therapeutic relationship"), 1)
@@ -403,8 +415,8 @@ def services():
       </div>
 
       <div class="service-cta" data-reveal>
-        {grow_btn(X(t, "BOOK A CONSULTATION"))}
-        <p class="btn-note">Opens Grow Therapy in a new tab. Prefer to write first? <a href="/consultation/">Send an inquiry</a>.</p>
+        {inquire_btn()}
+        <p class="btn-note">Share a few details and I’ll be in touch.</p>
       </div>
     </div>
 
@@ -473,10 +485,9 @@ def consultation():
       <div class="consult-grid">
 
         <div class="book-card" data-reveal>
-          <h2 id="book-title">{E(X("root", "BOOK A CONSULTATION", ("header",)))}</h2>
-          <p>Ready now? Choose a time that works for you on Grow Therapy.</p>
-          {grow_btn(X("root", "BOOK A CONSULTATION", ("header",)))}
-          <p class="btn-note">Opens Grow Therapy in a new tab.</p>
+          <h2 id="book-title">Have insurance?</h2>
+          <p>If you have Aetna, Cigna, Florida Blue or United Healthcare, you can also request a session straight from your insurer’s booking page.</p>
+          <a class="btn" href="/services/#therapy"><span>See insurance options</span>{ARR_BTN}</a>
         </div>
 
         <div class="form-card" data-reveal style="--delay:.1s">
@@ -533,6 +544,20 @@ def consultation():
               <p class="error" id="e-phone"></p>
             </div>
 
+            <div class="field">
+              <label for="f-coverage">Insurance or private pay? {req}</label>
+              <select class="input select" id="f-coverage" name="coverage" required data-validate aria-describedby="e-coverage" aria-invalid="false">
+                <option value="">Select one</option>
+                <option>Private pay</option>
+                <option>Aetna</option>
+                <option>Cigna</option>
+                <option>Florida Blue</option>
+                <option>United Healthcare</option>
+                <option>Other / not sure</option>
+              </select>
+              <p class="error" id="e-coverage"></p>
+            </div>
+
             <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
 
             <div class="submit-row">
@@ -579,6 +604,32 @@ def panel(num, lead, rest, cls=""):
             f'<p class="lead">{E(lead)}</p>{body}</article>')
 
 
+# ---- About-card visuals on /alt/ — swap images here (files live in assets/img/) ----------------------
+# kind: "photo" = framed in an arch with warm grade + grain · "tile" = full-bleed brand tile
+#       "shape" = brand shape centred on a colour (bg: sky | blush | butter | saffron)
+ABOUT_CARD_VISUALS = [
+    dict(kind="photo", file="about-sunset.webp", alt="Paige on a Gulf-coast beach at sunset, arms raised"),
+    dict(kind="shape", file="icon-attune.webp", bg="sky", alt=""),
+    dict(kind="tile", file="tile-sunburst.webp", alt=""),
+    dict(kind="tile", file="tile-ring.webp", alt=""),
+    dict(kind="tile", file="tile-flower.webp", alt=""),
+    dict(kind="shape", file="bloom-blue.webp", bg="blush", alt=""),
+]
+
+
+def _card_visual(v, n):
+    badge = f'<span class="badge" aria-hidden="true">{n}</span>'
+    src, alt = f"/assets/img/{v['file']}", A(v["alt"])
+    if v["kind"] == "photo":
+        img = f'<img class="arch-photo" src="{src}" alt="{alt}" width="1206" height="1278" loading="lazy">'
+        return f'<div class="card-visual card-visual--photo">{img}{badge}</div>'
+    if v["kind"] == "shape":
+        img = f'<img class="shape" src="{src}" alt="{alt}" loading="lazy">'
+        return f'<div class="card-visual card-visual--shape bg-{v["bg"]}">{img}{badge}</div>'
+    img = f'<img src="{src}" alt="{alt}" width="900" height="900" loading="lazy">'
+    return f'<div class="card-visual">{img}{badge}</div>'
+
+
 def alt_home():
     p = "root"
     base = "/alt/"
@@ -593,19 +644,15 @@ def alt_home():
         panel("01", m1[0], m1[1]), panel("02", m2[0], " ".join(m2[1:]))))
 
     a1, a2, a3 = (_sents(T("about", x)) for x in ("I became a therapist", "I believe that understanding", "I consider myself"))
-    cards = [
-        ("01", "Why I became a therapist", [a1[0]], "about-sunset.webp", "Paige on a Gulf-coast beach at sunset, arms raised"),
-        ("02", "Finding clarity", [a1[1], a1[2]], "tile-mandala-warm.webp", "Crystal mandala in warm tones"),
-        ("03", "Reclaiming your power", [a2[0]], "tile-sunburst.webp", ""),
-        ("04", "Standing on your story", [a2[1]], "tile-ring.webp", ""),
-        ("05", "A lifelong student", [a3[0], a3[1]], "tile-flower.webp", ""),
-        ("06", "Unconditional positive regard", [a3[2]], "tile-mandala-blue.webp", "Crystal mandala in blue tones"),
-    ]
-    assert sum(len(c[2]) for c in cards) == len(a1) + len(a2) + len(a3)
+    titles = ["Why I became a therapist", "Finding clarity", "Reclaiming your power",
+              "Standing on your story", "A lifelong student", "Unconditional positive regard"]
+    texts = [[a1[0]], [a1[1], a1[2]], [a2[0]], [a2[1]], [a3[0], a3[1]], [a3[2]]]
+    assert sum(len(t) for t in texts) == len(a1) + len(a2) + len(a3)
+    assert len(ABOUT_CARD_VISUALS) == len(titles)
     cards_html = "\n".join(f"""              <li class="card glass">
-                <div class="card-visual"><img src="/assets/img/{img}" alt="{A(alt)}" width="900" height="900" loading="lazy"><span class="badge" aria-hidden="true">{n}</span></div>
-                <div class="card-body"><h4>{E(title)}</h4>{''.join(f'<p>{E(x)}</p>' for x in ps)}</div>
-              </li>""" for n, title, ps, img, alt in cards)
+                {_card_visual(v, f"{i+1:02d}")}
+                <div class="card-body"><h4>{E(t)}</h4>{''.join(f'<p>{E(x)}</p>' for x in ps)}</div>
+              </li>""" for i, (v, t, ps) in enumerate(zip(ABOUT_CARD_VISUALS, titles, texts)))
 
     steps = [("awaken", "icon-awaken", "AWAKEN", "Explore the experiences", "Step 1"),
              ("attune", "icon-attune", "ATTUNE", "Develop a deeper", "Step 2"),
@@ -640,7 +687,7 @@ def alt_home():
         <h2 class="leave" data-split>{E(T(p, ". . .Leave as Yourself"))}</h2>
         <div class="rule" aria-hidden="true"></div>
         <div class="cta-row">
-          {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+          {inquire_btn()}
           <a class="btn" href="#chapter-1">Start reading</a>
         </div>
       </div>
@@ -738,7 +785,7 @@ def alt_home():
           <h3>{E(X(p, "Therapy", ("header",)))}</h3>
           <p>{E(sentences(therapy_intro, 2))}</p>
           <div class="teaser-links">
-            {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+            {inquire_btn()}
             <a class="link-arrow" href="/services/#therapy">{E(X(p, "Learn more"))} {ARROW}</a>
           </div>
         </article>
@@ -762,9 +809,9 @@ def alt_home():
       <h2 id="closing-title" data-reveal>{E(X(p, "Lets Align."))}</h2>
       <div class="cta-row" data-reveal style="--delay:.1s">
         <a class="btn" href="/services/#therapy">{E(X(p, "Learn more"))}</a>
-        {grow_btn(X(p, "BOOK A CONSULTATION", ("header",)))}
+        {inquire_btn()}
       </div>
-      <p class="btn-note" style="margin-inline:auto">Booking opens on Grow Therapy in a new tab.</p>
+      <p class="btn-note" style="margin-inline:auto">Share a few details and I’ll be in touch.</p>
     </div>
   </section>
 

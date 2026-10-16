@@ -38,6 +38,8 @@ MAP = {
 }
 # Squarespace chrome that has no equivalent in a design without a cart / mobile folder drawer
 SQS_CHROME = {"0", "Back", "Folder: Services", "Open Menu Close Menu"}
+# labels deliberately replaced after Paige's feedback (booking CTAs now lead to the inquiry form)
+CHANGED = {"BOOK A CONSULTATION", "Book Session"}
 
 new_pages = {f: parse(os.path.join(ROOT, f)) for f in {"index.html", "services/index.html", "consultation/index.html", "alt/index.html"}}
 new_text = {f: norm(" ".join(l["text"] for l in p.lines)) for f, p in new_pages.items()}
@@ -60,7 +62,7 @@ for page, targets in list(MAP.items()) + [("root", ["alt/index.html"]), ("about"
     hay_ph = hay + " " + " ".join(" ".join(i.get("placeholder", "") for i in new_pages[t].inputs) for t in targets)
     lines = list(dict.fromkeys(orig_lines(page)))
     full = " ".join(new_text[t] for t in targets)
-    missing = [l for l in lines if l not in hay and l not in SQS_CHROME and (len(l) > 60 or l not in full)]
+    missing = [l for l in lines if l not in hay and l not in SQS_CHROME and l not in CHANGED and (len(l) > 60 or l not in full)]
     skipped = [l for l in lines if l in SQS_CHROME]
     ok = len(lines) - len(missing) - len(skipped)
     print(f"{page:12s} {targets[0][:10]:10s} {ok:3d}/{len(lines) - len(skipped)} lines verbatim" + (f"   (+{len(skipped)} Squarespace-only UI strings skipped)" if skipped else ""))
@@ -107,17 +109,33 @@ for fn, label in need.items():
     print(f"{'ok ' if ok else 'MISSING'} {fn:26s} <- {label}"); fail |= not ok
 print("note  graphic-shape.png (About page) is hidden on the live site (display:none) — not carried over")
 
-print("\n" + "=" * 72, "\n4. GROW — booking links\n" + "=" * 72)
-total = 0
-for f, p in new_pages.items():
-    for l in p.links:
-        if "growtherapy.com/book-appointment" in l["href"] or "data-grow" in str(l):
-            total += 1
-            good = l["href"] == GROW and l["target"] == "_blank"
-            print(f"{'ok ' if good else 'BAD'} {f:26s} [{l['region']}] {l['text'][:40]!r}"); fail |= not good
-raw = "".join(open(os.path.join(ROOT, f), encoding="utf-8").read() for f in new_pages)
-rel_ok = len(re.findall(r'href="https://growtherapy\.com/book-appointment[^"]*"[^>]*rel="noopener noreferrer"', raw))
-print(f"{total} booking links, {rel_ok} with rel=noopener noreferrer")
-fail |= rel_ok != total
+print("\n" + "=" * 72, "\n4. CTAs & BOOKING LINKS\n" + "=" * 72)
+def hrefs(f): return [(l["href"], l["text"], l["target"]) for l in new_pages[f].links]
+raw = {f: open(os.path.join(ROOT, f), encoding="utf-8").read() for f in new_pages}
+# a) the old Grow "book-appointment" funnel link must be gone everywhere
+n_old = sum(r.count("book-appointment") for r in raw.values())
+print(f"{'ok ' if n_old == 0 else 'BAD'} no site-wide Grow book-appointment links ({n_old} found)"); fail |= n_old != 0
+# b) Grow/Headway only on the matching insurance cards, exact original hrefs
+tl = json.load(open(os.path.join(EX, "therapy.json"), encoding="utf-8"))["links"]
+orig = {norm(l["text"]): l["href"] for l in tl}
+sv = {norm(t): (h, tg) for h, t, tg in hrefs("services/index.html")}
+for label in ("Book with Aetna or Cigna", "Book with Florida Blue or United"):
+    got = next(((h, tg) for t, (h, tg) in sv.items() if t.startswith(label)), None)
+    good = got and got[0] == orig[label] and got[1] == "_blank"
+    print(f"{'ok ' if good else 'BAD'} {label} -> original link, new tab"); fail |= not good
+other = [h for f in new_pages for h, t, tg in hrefs(f) if ("growtherapy.com" in h or "headway.co" in h)]
+print(f"{'ok ' if len(other) == 2 else 'BAD'} only 2 insurer links on the whole site ({len(other)} found)"); fail |= len(other) != 2
+# c) private pay + every Inquire / announce link goes to the inquiry form
+pp = next(((h, t) for h, t, tg in hrefs("services/index.html") if "Inquire about private pay" in t), None)
+print(f"{'ok ' if pp and pp[0] == '/consultation/' else 'BAD'} private pay button -> /consultation/"); fail |= not (pp and pp[0] == "/consultation/")
+for f in new_pages:
+    ann = [h for h, t, tg in hrefs(f) if t.strip().startswith("Inquire →")]
+    inq = [h for h, t, tg in hrefs(f) if t.strip().startswith("Inquire") and "private" not in t]
+    good = ann == ["/consultation/"] and all(h == "/consultation/" for h in inq) and len(inq) >= 3
+    print(f"{'ok ' if good else 'BAD'} {f:26s} announce bar + {len(inq)-1} Inquire buttons -> /consultation/"); fail |= not good
+# d) the form carries the new field
+cf = raw["consultation/index.html"]
+ok = 'name="coverage"' in cf and "Insurance or private pay?" in cf
+print(f"{'ok ' if ok else 'BAD'} inquiry form has the insurance / private pay dropdown"); fail |= not ok
 print("\nRESULT:", "FAIL" if fail else "PASS")
 sys.exit(1 if fail else 0)

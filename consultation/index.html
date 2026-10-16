@@ -29,8 +29,8 @@
   </div>
   <p class="intro-skip">Tap to skip</p>
 </div>
-<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now booking therapy.</span>
-  <a href="https://growtherapy.com/book-appointment?prsid=oq1cmlyoxaaf&amp;ref=grow&amp;setting=Virtual&amp;insuranceId=&amp;state=&amp;cusid=" target="_blank" rel="noopener noreferrer" data-grow>Book on Grow Therapy<svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a></div>
+<div class="announce" role="region" aria-label="Booking announcement"><span class="pulse-dot" aria-hidden="true"></span><span>Now accepting new clients</span>
+  <a href="/consultation/">Inquire →</a></div>
 <header class="site-header">
   <a class="skip" href="#main">Skip to Content</a>
   <div class="header-inner">
@@ -42,9 +42,9 @@
         <li><a class="nav-link" href="/#about" data-open-about>About</a></li>
         <li><a class="nav-link" href="/consultation/" aria-current="page">WORK WITH ME</a></li>
       </ul>
-      <div class="nav-cta-mobile"><a class="btn btn--solid" data-grow href="https://growtherapy.com/book-appointment?prsid=oq1cmlyoxaaf&amp;ref=grow&amp;setting=Virtual&amp;insuranceId=&amp;state=&amp;cusid=" target="_blank" rel="noopener noreferrer"><span>BOOK A CONSULTATION</span><svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a></div>
+      <div class="nav-cta-mobile"><a class="btn btn--solid" href="/consultation/"><span>Inquire</span><svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
     </nav>
-    <a class="btn btn--solid header-cta" data-grow href="https://growtherapy.com/book-appointment?prsid=oq1cmlyoxaaf&amp;ref=grow&amp;setting=Virtual&amp;insuranceId=&amp;state=&amp;cusid=" target="_blank" rel="noopener noreferrer"><span>BOOK A CONSULTATION</span><svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a>
+    <a class="btn btn--solid header-cta" href="/consultation/"><span>Inquire</span><svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"><span class="bars" aria-hidden="true"></span><span class="menu-label">Open Menu</span></button>
   </div>
 </header>
@@ -57,10 +57,9 @@
       <div class="consult-grid">
 
         <div class="book-card" data-reveal>
-          <h2 id="book-title">BOOK A CONSULTATION</h2>
-          <p>Ready now? Choose a time that works for you on Grow Therapy.</p>
-          <a class="btn btn--solid" data-grow href="https://growtherapy.com/book-appointment?prsid=oq1cmlyoxaaf&amp;ref=grow&amp;setting=Virtual&amp;insuranceId=&amp;state=&amp;cusid=" target="_blank" rel="noopener noreferrer"><span>BOOK A CONSULTATION</span><svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a>
-          <p class="btn-note">Opens Grow Therapy in a new tab.</p>
+          <h2 id="book-title">Have insurance?</h2>
+          <p>If you have Aetna, Cigna, Florida Blue or United Healthcare, you can also request a session straight from your insurer’s booking page.</p>
+          <a class="btn" href="/services/#therapy"><span>See insurance options</span><svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
 
         <div class="form-card" data-reveal style="--delay:.1s">
@@ -117,6 +116,20 @@
               <p class="error" id="e-phone"></p>
             </div>
 
+            <div class="field">
+              <label for="f-coverage">Insurance or private pay? <span class="req">(required)</span></label>
+              <select class="input select" id="f-coverage" name="coverage" required data-validate aria-describedby="e-coverage" aria-invalid="false">
+                <option value="">Select one</option>
+                <option>Private pay</option>
+                <option>Aetna</option>
+                <option>Cigna</option>
+                <option>Florida Blue</option>
+                <option>United Healthcare</option>
+                <option>Other / not sure</option>
+              </select>
+              <p class="error" id="e-coverage"></p>
+            </div>
+
             <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
 
             <div class="submit-row">
@@ -141,7 +154,6 @@
     <ul class="footer-links">
       <li><a href="/#about" data-open-about>ABOUT</a></li>
       <li><a href="/consultation/">WORK WITH ME</a></li>
-      <li><a href="https://growtherapy.com/book-appointment?prsid=oq1cmlyoxaaf&amp;ref=grow&amp;setting=Virtual&amp;insuranceId=&amp;state=&amp;cusid=" target="_blank" rel="noopener noreferrer">Grow Therapy<svg class="ext" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a></li>
     </ul>
   </div>
 </footer>

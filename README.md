@@ -40,6 +40,16 @@ python3 -I _tools/verify.py    # text 1:1 vs. original, images, Grow links
 ```
 `verify.py` also prints every piece of text that was *added* to the original (labels, tags, helper text).
 
+## Booking funnel
+All "Inquire" buttons and the top bar ("Now accepting new clients · Inquire →") go to `/consultation/`, which now asks
+"Insurance or private pay?". Grow and Headway links appear **only** on the matching insurance cards on the Services page;
+the private-pay card goes to the inquiry form.
+
+## Swapping photos on the /alt/ About cards
+Edit `ABOUT_CARD_VISUALS` in `_tools/build.py` (one entry per card; `kind` is `photo` = arch frame + warm grade + grain,
+`tile` = full-bleed brand tile, `shape` = brand shape on a colour). Drop the new file in `assets/img/`, then re-run `build.py`.
+A real portrait or lifestyle photo works best as `kind="photo"`.
+
 ## Not carried over (on purpose)
 - Store, Cart (empty), Privacy Policy and Terms & Conditions — the last two are untouched Squarespace template filler ("It all begins with an idea…"), not real policies, and nothing linked to them. A therapy practice should publish real ones.
 - `/book-session` — an unlinked Acuity scheduler page ("work with me / 1x1 private sessions, monthly mentorship").

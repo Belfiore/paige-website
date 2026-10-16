@@ -248,3 +248,21 @@ body.page-alt {
   .panels { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .glass-bg::before, .a-hero-art .orb { animation: none !important; } }
+
+/* ---------- About cards: arch-framed photo + brand shapes (no stock mandalas) ---------- */
+.card-visual--photo { display: flex; justify-content: center; align-items: flex-end; padding-top: 16px; background: var(--sand); }
+.card-visual--photo .arch-photo {
+  width: auto; height: 100%; aspect-ratio: 5 / 5.2; max-width: 74%; object-fit: cover; object-position: 50% 62%;
+  border-radius: 999px 999px 0 0; border: 1.5px solid var(--ink); border-bottom: 0;
+  filter: sepia(0.2) saturate(1.12) contrast(1.04) brightness(1.04); /* warm grade: makes the soft video frame read as intentional */
+}
+.card-visual--photo::after { /* light film grain + warm wash */
+  content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; opacity: 0.95;
+  background: var(--grain), linear-gradient(180deg, rgba(247, 172, 90, 0.16), rgba(249, 88, 56, 0.12));
+}
+.card:hover .card-visual--photo .arch-photo { transform: none; }
+.card-visual--shape { display: grid; place-items: center; }
+.card-visual--shape .shape { width: 42%; height: auto; max-height: 70%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(54, 48, 42, 0.18)); animation: float 7s ease-in-out infinite; }
+.card:hover .card-visual--shape .shape { transform: none; }
+.bg-sky { background: var(--sky); } .bg-blush { background: #ffb7a6; } .bg-butter { background: var(--butter); } .bg-saffron { background: var(--saffron); }
+@media (prefers-reduced-motion: reduce) { .card-visual--shape .shape { animation: none; } }

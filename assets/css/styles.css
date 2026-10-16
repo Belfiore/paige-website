@@ -584,3 +584,8 @@ body.has-announce .site-header { top: 52px; transition: transform 0.6s var(--eas
 .service-tabs .dot--soon { background: transparent; border: 1.5px dashed currentColor; }
 .service { scroll-margin-top: calc(var(--header-h) + 52px); }
 @media (max-width: 600px) { .service-tabs { top: 138px; } .service-tabs a { padding: 0 0.85em; font-size: 0.85rem; } }
+
+/* select (inquiry form): same look as the other fields, with a visible chevron */
+.select { cursor: pointer; padding-right: 2.8rem; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m2 4 4 4 4-4' fill='none' stroke='%2336302a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 1rem center / 14px; }
+.select:invalid { color: var(--placeholder); }
+.select option { color: var(--ink); }

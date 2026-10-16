@@ -361,9 +361,6 @@
   if (form) {
     const getEndpoint = () => (($('meta[name="inquiry-endpoint"]') || {}).content || "").trim();
     const alertBox = $(".form-alert"); // sits above the form, so search the document
-    // single source of truth for the booking URL: the page's own Grow button
-    const growHref = (($("[data-grow]") || {}).href || "").replace(/&/g, "&amp;");
-    const growLink = growHref ? `<a href="${growHref}" target="_blank" rel="noopener noreferrer">Grow Therapy</a>` : "Grow Therapy";
     const submitBtn = $('button[type="submit"]', form);
     const thanks = $("#thanks");
 
@@ -374,6 +371,7 @@
       day: (v) => (v.trim() ? "" : "Please enter a preferred day."),
       message: (v) => (v.trim() ? "" : "Please add a short message."),
       time: (v) => (v ? "" : "Please choose a preferred time."),
+      coverage: (v) => (v ? "" : "Please choose insurance or private pay."),
       phone: (v) => !v.trim() ? "Please enter your phone number." : v.replace(/\D/g, "").length >= 10 ? "" : "Please enter a phone number with at least 10 digits.",
     };
 
@@ -418,7 +416,7 @@
       const endpoint = getEndpoint();
       if (!endpoint) {
         console.warn("[inquiry] No endpoint configured. Set <meta name=\"inquiry-endpoint\"> in consultation/index.html.");
-        showAlert(`This form isn’t connected to email yet, so your message was not sent. You can book directly through ${growLink} in the meantime.`);
+        showAlert(`This form isn’t connected to email yet, so your message was not sent. Please try again soon.`);
         return;
       }
       submitBtn.disabled = true;
@@ -437,7 +435,7 @@
         thanks.focus();
         thanks.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
       } catch (err) {
-        showAlert(`Something went wrong and your message was not sent. Please try again, or book directly through ${growLink}.`);
+        showAlert(`Something went wrong and your message was not sent. Please try again in a moment.`);
         submitBtn.disabled = false;
         label.textContent = original;
       }
