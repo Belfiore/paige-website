@@ -30,8 +30,8 @@ def orig_lines(page, regions=("header", "main", "footer")):
 
 # original page  ->  new page(s) it now lives on
 MAP = {
-    "root": ["index.html"],
-    "about": ["index.html"],
+    "root": ["classic/index.html"],
+    "about": ["classic/index.html"],
     "therapy": ["services/index.html"],
     "reiki": ["services/index.html"],
     "supervision": ["services/index.html"],
@@ -41,7 +41,7 @@ SQS_CHROME = {"0", "Back", "Folder: Services", "Open Menu Close Menu"}
 # labels deliberately replaced after Paige's feedback (booking CTAs now lead to the inquiry form)
 CHANGED = {"BOOK A CONSULTATION", "Book Session"}
 
-new_pages = {f: parse(os.path.join(ROOT, f)) for f in {"index.html", "services/index.html", "consultation/index.html", "alt/index.html"}}
+new_pages = {f: parse(os.path.join(ROOT, f)) for f in {"classic/index.html", "services/index.html", "consultation/index.html", "index.html"}}
 new_text = {f: norm(" ".join(l["text"] for l in p.lines)) for f, p in new_pages.items()}
 # the form-labels live in the consultation page
 form_expected = ["Name", "First Name", "(required)", "Last Name", "Email", "Preferred Day", "Short Message",
@@ -51,8 +51,8 @@ form_expected = ["Name", "First Name", "(required)", "Last Name", "Email", "Pref
 
 fail = False
 print("=" * 72, "\n1. TEXT — original lines found verbatim in the new site\n" + "=" * 72)
-for page, targets in list(MAP.items()) + [("root", ["alt/index.html"]), ("about", ["alt/index.html"])]:
-    if targets[0].startswith("alt/"):
+for page, targets in list(MAP.items()) + [("root", ["index.html"]), ("about", ["index.html"])]:
+    if targets[0] == "index.html":
         # story page splits paragraphs into chunks with added emoji/labels between them:
         # drop the added blocks, then the original paragraphs must be intact and in order
         _all = norm(" ".join(l for pg in MAP for l in orig_lines(pg)))

@@ -7,7 +7,7 @@ BASE = sys.argv[1].rstrip("/")
 DOMAIN = sys.argv[2] if len(sys.argv) > 2 else ""
 OUT = os.path.join(ROOT, "docs")
 shutil.rmtree(OUT, ignore_errors=True)
-for item in ["assets", "index.html", "services", "consultation", "alt", "about", "therapy", "reiki", "supervision", "home", "favicon.ico"]:
+for item in ["assets", "index.html", "services", "consultation", "alt", "classic", "about", "therapy", "reiki", "supervision", "home", "favicon.ico"]:
     src = os.path.join(ROOT, item)
     (shutil.copytree if os.path.isdir(src) else shutil.copy)(src, os.path.join(OUT, item))
 open(os.path.join(OUT, ".nojekyll"), "w").close()

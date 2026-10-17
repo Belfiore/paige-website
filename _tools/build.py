@@ -210,7 +210,7 @@ def home():
         f'          <li><img src="/assets/img/{n}.webp" alt="{A(a)}" width="900" height="900" loading="lazy"></li>' for n, a in tiles)
 
     return head("Highly Aligned Therapy", desc) + f"""<body class="has-announce page-home">
-{INTRO}{header("home")}
+{INTRO}{header("home", "/classic/")}
 <main id="main">
 
   <div class="hero-wrap">
@@ -339,7 +339,7 @@ def home():
   </section>
 
 </main>
-""" + footer('<li><a href="/alt/">Try the story version of this page</a></li>')
+""" + footer('<li><a href="/">See the new home page</a></li>', "/classic/")
 
 
 # ---------------------------------------------------------------------------
@@ -632,7 +632,7 @@ def _card_visual(v, n):
 
 def alt_home():
     p = "root"
-    base = "/alt/"
+    base = "/"
     h1 = _sents(T(p, "You don’t need to have everything"))
     h2 = _sents(T(p, "If your own mind"))
     hero_panels = "\n".join("        " + x for x in (
@@ -816,7 +816,7 @@ def alt_home():
   </section>
 
 </main>
-""" + footer('<li><a href="/">See the original home page</a></li>', base)
+""" + footer('<li><a href="/classic/">See the original home page</a></li>', base)
 
 
 def stub(target, label):
@@ -844,11 +844,12 @@ def write(rel, content):
 
 
 if __name__ == "__main__":
-    write("index.html", home())
+    write("index.html", alt_home())
     write("services/index.html", services())
     write("consultation/index.html", consultation())
     # old Squarespace URLs keep working
-    write("alt/index.html", alt_home())
+    write("classic/index.html", home())
+    write("alt/index.html", stub("/", "the home page"))
     write("about/index.html", stub("/#about", "About"))
     write("therapy/index.html", stub("/services/#therapy", "Therapy"))
     write("reiki/index.html", stub("/services/#reiki", "Reiki"))
