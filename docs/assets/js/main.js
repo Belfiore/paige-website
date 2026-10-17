@@ -415,6 +415,7 @@
       const err = $(".error", field);
       field.classList.toggle("has-error", !!msg);
       input.setAttribute("aria-invalid", msg ? "true" : "false");
+      if (input.type === "hidden") { const g = $(".time-picker", field); if (g) g.setAttribute("aria-invalid", msg ? "true" : "false"); }
       if (err) err.textContent = msg;
       return !msg;
     }
@@ -423,6 +424,15 @@
       i.addEventListener("blur", () => { if (i.value || i.getAttribute("aria-invalid") === "true") check(i); });
       i.addEventListener("input", () => { if (i.getAttribute("aria-invalid") === "true") check(i); });
     });
+
+    // time chips -> hidden "time" field + a plain-language summary
+    const timeHidden = $("#f-time");
+    const timeSummary = $("#time-summary");
+    $$(".slot input", form).forEach((r) => r.addEventListener("change", () => {
+      timeHidden.value = r.value;
+      timeSummary.textContent = "You picked " + r.dataset.label + " Eastern Time";
+      check(timeHidden);
+    }));
 
     const fmtTime = (hhmm) => {
       const [h, m] = hhmm.split(":").map(Number);
@@ -436,11 +446,12 @@
       const bad = inputs.filter((i) => !check(i));
       if (bad.length) {
         showAlert("Please fix the highlighted fields and try again.");
-        bad[0].focus();
+        (bad[0].type === "hidden" ? $(".slot input", form) : bad[0]).focus();
         return;
       }
       const data = new FormData(form);
       if (data.get("_gotcha")) return; // honeypot
+      data.delete("slot"); // helper radios only; the chosen value travels as "time"
       data.set("preferred_time_readable", fmtTime(data.get("time")));
       data.set("_subject", "Consultation Inquiry");
       data.set("_template", "table");

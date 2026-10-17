@@ -118,12 +118,16 @@
               <p class="error" id="e-message"></p>
             </div>
 
-            <div class="field">
-              <label for="f-time">Preferred Time <span class="req">(required)</span></label>
-              <div class="time-row">
-                <input class="input" id="f-time" name="time" type="time" required data-validate aria-describedby="h-time e-time" aria-invalid="false">
-                <span class="zone" id="h-time">in Eastern Time</span>
+            <div class="field" id="time-field">
+              <span class="field-label" id="l-time">Preferred Time <span class="req">(required)</span></span>
+              <p class="hint" id="h-time">in Eastern Time</p>
+              <input type="hidden" id="f-time" name="time" data-validate aria-invalid="false">
+              <div class="time-picker" role="radiogroup" aria-labelledby="l-time" aria-describedby="h-time e-time" aria-invalid="false">
+                <p class="slot-group-title">Morning</p><div class="slots"><label class="slot"><input type="radio" name="slot" value="08:00" data-label="8:00 AM"><span>8:00 AM</span></label><label class="slot"><input type="radio" name="slot" value="08:30" data-label="8:30 AM"><span>8:30 AM</span></label><label class="slot"><input type="radio" name="slot" value="09:00" data-label="9:00 AM"><span>9:00 AM</span></label><label class="slot"><input type="radio" name="slot" value="09:30" data-label="9:30 AM"><span>9:30 AM</span></label><label class="slot"><input type="radio" name="slot" value="10:00" data-label="10:00 AM"><span>10:00 AM</span></label><label class="slot"><input type="radio" name="slot" value="10:30" data-label="10:30 AM"><span>10:30 AM</span></label><label class="slot"><input type="radio" name="slot" value="11:00" data-label="11:00 AM"><span>11:00 AM</span></label><label class="slot"><input type="radio" name="slot" value="11:30" data-label="11:30 AM"><span>11:30 AM</span></label></div>
+                <p class="slot-group-title">Afternoon</p><div class="slots"><label class="slot"><input type="radio" name="slot" value="12:00" data-label="12:00 PM"><span>12:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="12:30" data-label="12:30 PM"><span>12:30 PM</span></label><label class="slot"><input type="radio" name="slot" value="13:00" data-label="1:00 PM"><span>1:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="13:30" data-label="1:30 PM"><span>1:30 PM</span></label><label class="slot"><input type="radio" name="slot" value="14:00" data-label="2:00 PM"><span>2:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="14:30" data-label="2:30 PM"><span>2:30 PM</span></label><label class="slot"><input type="radio" name="slot" value="15:00" data-label="3:00 PM"><span>3:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="15:30" data-label="3:30 PM"><span>3:30 PM</span></label><label class="slot"><input type="radio" name="slot" value="16:00" data-label="4:00 PM"><span>4:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="16:30" data-label="4:30 PM"><span>4:30 PM</span></label></div>
+                <p class="slot-group-title">Evening</p><div class="slots"><label class="slot"><input type="radio" name="slot" value="17:00" data-label="5:00 PM"><span>5:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="17:30" data-label="5:30 PM"><span>5:30 PM</span></label><label class="slot"><input type="radio" name="slot" value="18:00" data-label="6:00 PM"><span>6:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="18:30" data-label="6:30 PM"><span>6:30 PM</span></label><label class="slot"><input type="radio" name="slot" value="19:00" data-label="7:00 PM"><span>7:00 PM</span></label><label class="slot"><input type="radio" name="slot" value="19:30" data-label="7:30 PM"><span>7:30 PM</span></label></div>
               </div>
+              <p class="time-summary" id="time-summary" aria-live="polite"></p>
               <p class="error" id="e-time"></p>
             </div>
 

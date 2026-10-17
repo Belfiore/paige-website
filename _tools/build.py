@@ -470,6 +470,29 @@ FORM_LABELS = ["Name", "First Name", "Last Name", "Email", "Preferred Day", "Sho
                "Preferred Time", "in Eastern Time", "Phone Number", "Send Inquiry"]
 
 
+# Preferred-time chips. Edit these to match the hours Paige actually offers (24h clock, minutes).
+SLOT_START, SLOT_END, SLOT_STEP = 8 * 60, 19 * 60 + 30, 30   # 8:00 AM .. 7:30 PM, every 30 min
+
+
+def _slot_label(m):
+    h, mi = divmod(m, 60)
+    return f"{((h + 11) % 12) + 1}:{mi:02d} {'AM' if h < 12 else 'PM'}"
+
+
+def time_picker_html():
+    groups = [("Morning", 0, 12 * 60), ("Afternoon", 12 * 60, 17 * 60), ("Evening", 17 * 60, 24 * 60)]
+    out = []
+    for name, lo, hi in groups:
+        slots = [m for m in range(SLOT_START, SLOT_END + 1, SLOT_STEP) if lo <= m < hi]
+        if not slots:
+            continue
+        chips = "".join(
+            f'<label class="slot"><input type="radio" name="slot" value="{m // 60:02d}:{m % 60:02d}" data-label="{_slot_label(m)}"><span>{_slot_label(m)}</span></label>'
+            for m in slots)
+        out.append(f'<p class="slot-group-title">{name}</p><div class="slots">{chips}</div>')
+    return "\n                ".join(out)
+
+
 def consultation():
     # the visible labels were captured from the rendered form (get_page_text); (required) is original text
     req = '<span class="req">(required)</span>'
@@ -546,12 +569,14 @@ def consultation():
               <p class="error" id="e-message"></p>
             </div>
 
-            <div class="field">
-              <label for="f-time">{E(FORM_LABELS[6])} {req}</label>
-              <div class="time-row">
-                <input class="input" id="f-time" name="time" type="time" required data-validate aria-describedby="h-time e-time" aria-invalid="false">
-                <span class="zone" id="h-time">{E(FORM_LABELS[7])}</span>
+            <div class="field" id="time-field">
+              <span class="field-label" id="l-time">{E(FORM_LABELS[6])} {req}</span>
+              <p class="hint" id="h-time">{E(FORM_LABELS[7])}</p>
+              <input type="hidden" id="f-time" name="time" data-validate aria-invalid="false">
+              <div class="time-picker" role="radiogroup" aria-labelledby="l-time" aria-describedby="h-time e-time" aria-invalid="false">
+                {time_picker_html()}
               </div>
+              <p class="time-summary" id="time-summary" aria-live="polite"></p>
               <p class="error" id="e-time"></p>
             </div>
 
