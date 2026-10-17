@@ -327,6 +327,37 @@
     secs.forEach((el) => spy.observe(el));
   }
 
+  /* Copy the email address, with a visible + announced confirmation */
+  $$(".copy-btn").forEach((btn) => {
+    const status = btn.closest(".email-box") && $(".copy-status", btn.closest(".email-box"));
+    let timer;
+    const say = (msg, ok) => {
+      if (status) { status.textContent = msg; status.classList.toggle("is-error", !ok); status.classList.add("show"); }
+      btn.classList.toggle("copied", ok);
+      clearTimeout(timer);
+      timer = setTimeout(() => { if (status) status.classList.remove("show"); btn.classList.remove("copied"); }, 2600);
+    };
+    const legacyCopy = (text) => {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      ta.remove();
+      return ok;
+    };
+    btn.addEventListener("click", async () => {
+      const text = btn.dataset.copy;
+      let ok = false;
+      if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { ok = false; }
+      }
+      if (!ok) ok = legacyCopy(text); // older browsers / in-app browsers that block the modern API
+      if (ok) say("Successfully copied", true);
+      else say("Couldn’t copy. Please select the address and copy it.", false);
+    });
+  });
+
   const cardsEl = $("#about-cards");
   const dotsEl = $(".dots");
   if (cardsEl && dotsEl) {
@@ -435,8 +466,8 @@
         alertBox.classList.remove("show");
         const formIntro = $(".form-intro");
         if (formIntro) formIntro.hidden = true;
-        const emailNote = $(".email-note");
-        if (emailNote) emailNote.hidden = true;
+        const emailBox = $(".email-box");
+        if (emailBox) emailBox.hidden = true;
         thanks.classList.add("show");
         thanks.setAttribute("tabindex", "-1");
         thanks.focus();

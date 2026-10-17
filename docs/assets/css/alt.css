@@ -271,3 +271,24 @@ body.page-alt {
 .email-note { margin: 0 0 1.2rem; padding: 0.9rem 1.1rem; max-width: none; border: 1.5px solid var(--ink); border-radius: 14px; background: rgba(255, 227, 150, 0.55); font-weight: 600; line-height: 1.5; }
 .email-note a { color: var(--ink); font-weight: 800; text-underline-offset: 0.2em; overflow-wrap: anywhere; }
 .email-note a:hover { text-decoration-thickness: 2px; }
+
+/* ---------- Email box: copy button + "open in your mail app" ---------- */
+.email-box { margin: 0 0 1.4rem; padding: 1rem 1.1rem 1.1rem; border: 1.5px solid var(--ink); border-radius: 16px; background: rgba(255, 227, 150, 0.55); }
+.email-box .email-note { margin: 0; padding: 0; border: 0; background: none; border-radius: 0; }
+.addr { display: inline-flex; align-items: center; gap: 0.4rem; max-width: 100%; vertical-align: middle; flex-wrap: wrap; }
+.copy-btn { position: relative; display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 12px; cursor: pointer; transition: background 0.25s, transform 0.25s var(--ease), color 0.25s; }
+.copy-btn:hover { background: #fff; transform: translateY(-1px); }
+.copy-btn svg { grid-area: 1 / 1; width: 20px; height: 20px; transition: opacity 0.2s, transform 0.3s var(--ease); }
+.copy-btn .i-check { opacity: 0; transform: scale(0.5); }
+.copy-btn.copied { background: #2f7d4f; color: #fff; border-color: #2f7d4f; }
+.copy-btn.copied .i-copy { opacity: 0; transform: scale(0.5); }
+.copy-btn.copied .i-check { opacity: 1; transform: none; }
+.copy-status { min-height: 0; max-height: 0; overflow: hidden; margin: 0; padding: 0; max-width: none; font-weight: 800; font-size: 0.95rem; color: #1f5e3a; opacity: 0; transition: opacity 0.25s, max-height 0.3s var(--ease), margin 0.3s; }
+.copy-status.show { max-height: 3rem; margin: 0.6rem 0 0; opacity: 1; }
+.copy-status.is-error { color: var(--danger); }
+.copy-status:not(.is-error).show::before { content: "\2713  "; }
+.mail-apps { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0.9rem 0 0; padding: 0; }
+.mail-apps a { display: inline-flex; align-items: center; gap: 0.55em; min-height: 44px; padding: 0 0.9em 0 0.5em; font-weight: 700; font-size: 0.95rem; text-decoration: none; color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 12px; transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.mail-apps a:hover { transform: translateY(-2px); box-shadow: 3px 3px 0 var(--gold); }
+.mail-apps svg { width: 26px; height: 26px; flex: none; }
+@media (max-width: 480px) { .mail-apps li { flex: 1 1 calc(50% - 8px); } .mail-apps a { width: 100%; white-space: nowrap; font-size: 0.9rem; padding-right: 0.6em; } }
