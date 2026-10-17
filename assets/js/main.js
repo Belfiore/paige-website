@@ -464,10 +464,8 @@
         if (body && (body.success === false || body.success === "false")) throw new Error(body.message || "not accepted");
         form.hidden = true;
         alertBox.classList.remove("show");
-        const formIntro = $(".form-intro");
-        if (formIntro) formIntro.hidden = true;
-        const emailBox = $(".email-box");
-        if (emailBox) emailBox.hidden = true;
+        const preForm = $(".pre-form");
+        if (preForm) preForm.hidden = true;
         thanks.classList.add("show");
         thanks.setAttribute("tabindex", "-1");
         thanks.focus();

@@ -292,3 +292,19 @@ body.page-alt {
 .mail-apps a:hover { transform: translateY(-2px); box-shadow: 3px 3px 0 var(--gold); }
 .mail-apps svg { width: 26px; height: 26px; flex: none; }
 @media (max-width: 480px) { .mail-apps li { flex: 1 1 calc(50% - 8px); } .mail-apps a { width: 100%; white-space: nowrap; font-size: 0.9rem; padding-right: 0.6em; } }
+
+/* ---------- Email box v2: title, one combined address+copy button, OR divider ---------- */
+.box-title { margin: 0 0 0.7rem; font-size: clamp(1.35rem, 2.4vw, 1.7rem); }
+.email-box .copy-pill { width: auto; height: auto; min-height: 52px; max-width: 100%; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.7rem; justify-content: space-between; font: 800 clamp(0.98rem, 3.9vw, 1.12rem) var(--font-mono); text-align: left; border-radius: 14px; box-shadow: 3px 3px 0 var(--gold); }
+.email-box .copy-pill:hover { transform: translateY(-2px); box-shadow: 5px 5px 0 var(--gold); }
+.copy-pill .addr-text { overflow-wrap: anywhere; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 0.22em; }
+.copy-pill .ico { display: inline-grid; place-items: center; width: 22px; height: 22px; flex: none; }
+.copy-pill .ico svg { grid-area: 1 / 1; width: 22px; height: 22px; transition: opacity 0.2s, transform 0.3s var(--ease); }
+.copy-pill .i-check { opacity: 0; transform: scale(0.5); }
+.copy-pill.copied { background: #2f7d4f; color: #fff; border-color: #2f7d4f; box-shadow: 3px 3px 0 rgba(47, 125, 79, 0.35); }
+.copy-pill.copied .i-copy { opacity: 0; transform: scale(0.5); }
+.copy-pill.copied .i-check { opacity: 1; transform: none; }
+.copy-pill .addr-text { transition: none; }
+.or-divider { display: flex; align-items: center; gap: 14px; margin: 1.5rem 0 1.2rem; max-width: none; font: 800 0.85rem / 1 var(--font-mono); letter-spacing: 0.2em; color: var(--bark); }
+.or-divider::before, .or-divider::after { content: ""; flex: 1; height: 1.5px; background: rgba(54, 48, 42, 0.35); }
+.pre-form .form-intro { margin-top: 0; }

@@ -495,8 +495,10 @@ def consultation():
         </div>
 
         <div class="form-card" data-reveal style="--delay:.1s">
+          <div class="pre-form">
           <div class="email-box">
-            <p class="email-note">Send me an email at <span class="addr"><a href="mailto:pmh@highlyalignedtherapy.com">pmh@highlyalignedtherapy.com</a><button class="copy-btn" type="button" data-copy="pmh@highlyalignedtherapy.com" aria-label="Copy email address"><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></span> or use the form below, both work.</p>
+            <h2 class="box-title">Email:</h2>
+            <button class="copy-btn copy-pill" type="button" data-copy="pmh@highlyalignedtherapy.com" aria-label="Copy email address pmh@highlyalignedtherapy.com"><span class="addr-text">pmh@highlyalignedtherapy.com</span><span class="ico" aria-hidden="true"><svg class="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
             <p class="copy-status" role="status" aria-live="polite"></p>
             <ul class="mail-apps" aria-label="Open the address in your email app">
               <li><a href="mailto:pmh@highlyalignedtherapy.com?subject=Consultation%20inquiry"><svg viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="7" fill="#2f8cf5"/><rect x="6" y="9" width="16" height="11" rx="2" fill="none" stroke="#fff" stroke-width="1.8"/><path d="m7 11 7 5 7-5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Apple Mail</span></a></li>
@@ -505,7 +507,10 @@ def consultation():
               <li><a href="https://compose.mail.yahoo.com/?to=pmh%40highlyalignedtherapy.com&amp;subject=Consultation%20inquiry" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="7" fill="#6001d2"/><path d="m8.5 8 5.5 8 5.5-8M14 16v5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Yahoo</span>{NEWTAB}</a></li>
             </ul>
           </div>
-          <p class="form-intro">Prefer to write first? Fill this out and I’ll be in touch. Fields marked (required) must be completed.</p>
+          <p class="or-divider" aria-hidden="false"><span>OR</span></p>
+          <h2 class="box-title">Use the form below.</h2>
+          <p class="form-intro">Fill this out and I’ll be in touch. Fields marked (required) must be completed.</p>
+          </div>
           <div class="form-alert" role="alert" tabindex="-1"></div>
 
           <form id="inquiry" novalidate aria-label="Consultation Inquiry" method="post" action="#">
