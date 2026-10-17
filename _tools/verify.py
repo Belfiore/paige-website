@@ -39,7 +39,7 @@ MAP = {
 # Squarespace chrome that has no equivalent in a design without a cart / mobile folder drawer
 SQS_CHROME = {"0", "Back", "Folder: Services", "Open Menu Close Menu"}
 # labels deliberately replaced after Paige's feedback (booking CTAs now lead to the inquiry form)
-CHANGED = {"BOOK A CONSULTATION", "Book Session"}
+CHANGED = {"BOOK A CONSULTATION", "Book Session", "About"}  # "About": removed from the menu on request
 
 new_pages = {f: parse(os.path.join(ROOT, f)) for f in {"classic/index.html", "services/index.html", "consultation/index.html", "index.html"}}
 new_text = {f: norm(" ".join(l["text"] for l in p.lines)) for f, p in new_pages.items()}
@@ -130,7 +130,7 @@ pp = next(((h, t) for h, t, tg in hrefs("services/index.html") if "Inquire about
 print(f"{'ok ' if pp and pp[0] == '/consultation/' else 'BAD'} private pay button -> /consultation/"); fail |= not (pp and pp[0] == "/consultation/")
 for f in new_pages:
     ann = [h for h, t, tg in hrefs(f) if t.strip().startswith("Inquire →")]
-    inq = [h for h, t, tg in hrefs(f) if t.strip().startswith("Inquire") and "private" not in t]
+    inq = [h for h, t, tg in hrefs(f) if (t.strip().startswith("Inquire") or t.strip().startswith("Work With Me")) and "private" not in t]
     good = ann == ["/consultation/"] and all(h == "/consultation/" for h in inq) and len(inq) >= 3
     print(f"{'ok ' if good else 'BAD'} {f:26s} announce bar + {len(inq)-1} Inquire buttons -> /consultation/"); fail |= not good
 # d) the form carries the new field

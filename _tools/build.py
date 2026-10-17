@@ -152,12 +152,10 @@ def header(current=None, home="/"):
       <ul>
         <li><a class="nav-link" href="{home}"{home_cur}>Home</a></li>
         <li><a class="nav-link" href="/services/"{svc_cur}>{lab("Services")}</a></li>
-        <li><a class="nav-link" href="{home}#about" data-open-about>{lab("About")}</a></li>
-        <li><a class="nav-link" href="/consultation/"{' aria-current="page"' if current == "consult" else ""}>{E(X("root", "WORK WITH ME"))}</a></li>
       </ul>
-      <div class="nav-cta-mobile">{inquire_btn()}</div>
+      <div class="nav-cta-mobile">{inquire_btn("Work With Me")}</div>
     </nav>
-    {inquire_btn().replace('class="btn btn--solid"', 'class="btn btn--solid header-cta"')}
+    {inquire_btn("Work With Me").replace('class="btn btn--solid"', 'class="btn btn--solid header-cta"')}
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"><span class="bars" aria-hidden="true"></span><span class="menu-label">Open Menu</span></button>
   </div>
 </header>
