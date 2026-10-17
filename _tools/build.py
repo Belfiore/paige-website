@@ -120,7 +120,10 @@ def head(title, desc, extra=""):
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/syne-latin.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/syne-mono-latin.woff2" crossorigin>
 <script>{HEAD_SCRIPT}</script>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/fraunces-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-latin.woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/styles.css">
+<link rel="stylesheet" href="/assets/css/alt.css">
 {extra}</head>
 """
 
@@ -209,7 +212,7 @@ def home():
     tiles_html = "\n".join(
         f'          <li><img src="/assets/img/{n}.webp" alt="{A(a)}" width="900" height="900" loading="lazy"></li>' for n, a in tiles)
 
-    return head("Highly Aligned Therapy", desc) + f"""<body class="has-announce page-home">
+    return head("Highly Aligned Therapy", desc) + f"""<body class="has-announce page-home page-alt">
 {INTRO}{header("home", "/classic/")}
 <main id="main">
 
@@ -366,7 +369,7 @@ def services():
         </article>""" for i, (h, s, b, url) in enumerate(cards))
 
     desc = sentences(T(t, "I believe the therapeutic relationship"), 1)
-    return head("Services — Highly Aligned Therapy", desc) + f"""<body class="has-announce page-services">
+    return head("Services — Highly Aligned Therapy", desc) + f"""<body class="has-announce page-services page-alt">
 {INTRO}{header("services")}
 <main id="main">
 
@@ -475,7 +478,7 @@ def consultation():
     endpoint_meta = ('<!-- Set content to your form service URL (e.g. https://formspree.io/f/xxxxxxxx). While it is empty the form tells\n'
                      '     visitors it is not connected, instead of pretending to send. -->\n'
                      '<meta name="inquiry-endpoint" content="">\n')
-    return head(clean(_page("consultation")["lines"][0]["text"]), "Consultation Inquiry — send a message to Paige Haile, Florida Licensed Mental Health Counselor.", endpoint_meta) + f"""<body class="has-announce page-consultation">
+    return head(clean(_page("consultation")["lines"][0]["text"]), "Consultation Inquiry — send a message to Paige Haile, Florida Licensed Mental Health Counselor.", endpoint_meta) + f"""<body class="has-announce page-consultation page-alt">
 {INTRO}{header("consult")}
 <main id="main">
   <section class="consult" aria-labelledby="consult-title">
@@ -669,9 +672,7 @@ def alt_home():
     sup_p = T("supervision", "Qualified supervision services")
     jung = T(p, "“One does not become")
     desc = T(p, "Greetings!").split(" :)")[0].replace("Greetings! ", "", 1)
-    extra = ('<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/fraunces-latin.woff2" crossorigin>\n'
-             '<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-latin.woff2" crossorigin>\n'
-             '<link rel="stylesheet" href="/assets/css/alt.css">\n')
+    extra = ""
 
     return head("Highly Aligned Therapy", desc, extra) + f"""<body class="has-announce page-alt">
 {INTRO}
