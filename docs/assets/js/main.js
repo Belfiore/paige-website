@@ -412,6 +412,8 @@
       if (data.get("_gotcha")) return; // honeypot
       data.set("preferred_time_readable", fmtTime(data.get("time")));
       data.set("_subject", "Consultation Inquiry");
+      data.set("_template", "table");
+      data.set("_captcha", "false");
 
       const endpoint = getEndpoint();
       if (!endpoint) {
@@ -426,6 +428,9 @@
       try {
         const res = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
         if (!res.ok) throw new Error("HTTP " + res.status);
+        let body = {};
+        try { body = await res.json(); } catch (e) { /* some services reply without JSON */ }
+        if (body && (body.success === false || body.success === "false")) throw new Error(body.message || "not accepted");
         form.hidden = true;
         alertBox.classList.remove("show");
         const formIntro = $(".form-intro");

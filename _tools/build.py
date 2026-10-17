@@ -475,9 +475,10 @@ FORM_LABELS = ["Name", "First Name", "Last Name", "Email", "Preferred Day", "Sho
 def consultation():
     # the visible labels were captured from the rendered form (get_page_text); (required) is original text
     req = '<span class="req">(required)</span>'
-    endpoint_meta = ('<!-- Set content to your form service URL (e.g. https://formspree.io/f/xxxxxxxx). While it is empty the form tells\n'
-                     '     visitors it is not connected, instead of pretending to send. -->\n'
-                     '<meta name="inquiry-endpoint" content="">\n')
+    endpoint_meta = ('<!-- Inquiries are emailed via FormSubmit (formsubmit.co) to the address in this URL.\n'
+                     '     First submission sends Paige a one-time activation email; click it, then use the random alias FormSubmit gives her\n'
+                     '     (replace the email below with it) so the address is not exposed in the page source. -->\n'
+                     '<meta name="inquiry-endpoint" content="https://formsubmit.co/ajax/pmh@highlyalignedtherapy.com">\n')
     return head(clean(_page("consultation")["lines"][0]["text"]), "Consultation Inquiry — send a message to Paige Haile, Florida Licensed Mental Health Counselor.", endpoint_meta) + f"""<body class="has-announce page-consultation page-alt">
 {INTRO}{header("consult")}
 <main id="main">
@@ -561,7 +562,7 @@ def consultation():
               <p class="error" id="e-coverage"></p>
             </div>
 
-            <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+            <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label><input type="text" name="_honey" tabindex="-1" autocomplete="off"></div>
 
             <div class="submit-row">
               <button class="btn btn--solid" type="submit"><span>{E(FORM_LABELS[9])}</span></button>

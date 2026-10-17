@@ -19,16 +19,13 @@ Open http://localhost:4173. (Use a server — links are root-relative, so openin
 ## Deploy
 Publish everything **except** `_audit/`, `_tools/`, `.claude/` to any static host (Netlify, Cloudflare Pages, Vercel, GitHub Pages…).
 
-## ⚠️ The inquiry form needs a destination
-Squarespace's form backend doesn't come with the content, so the form currently has nowhere to send.
-Until it's connected it tells visitors so (and points them to Grow Therapy) rather than pretending to send.
-
-1. Create a form endpoint (e.g. a free Formspree form pointed at Paige's email).
-2. Put its URL in `_tools/build.py` (`endpoint_meta`, the `inquiry-endpoint` meta tag) and run `python3 -I _tools/build.py` —
-   or edit the `<meta name="inquiry-endpoint" content="">` line directly in `consultation/index.html`.
-
-The form posts `first, last, email, day, message, time, phone` (+ `preferred_time_readable`) as form data with `Accept: application/json`.
-There's a hidden honeypot field for spam; add the service's own CAPTCHA if you want one like Squarespace had.
+## Inquiry form → email
+The form posts to FormSubmit (formsubmit.co) which emails each inquiry to pmh@highlyalignedtherapy.com
+(`inquiry-endpoint` meta tag in `consultation/index.html`, set in `_tools/build.py` as `endpoint_meta`).
+**One-time activation:** the first submission sends Paige an activation email — she must click it, or inquiries are not delivered.
+After activating, FormSubmit gives her a random alias; swap it into the endpoint URL so her address isn't visible in the page source.
+Note: this is a third-party relay — don't put clinical details in the form, and consider a HIPAA-compliant form service if she wants
+inquiries to carry health information.
 
 ## Editing
 `_tools/build.py` generates the three pages **and pulls all original copy from `_audit/extracted/`** so the text stays 1:1.

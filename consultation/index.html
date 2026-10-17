@@ -20,9 +20,10 @@
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-latin.woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/styles.css">
 <link rel="stylesheet" href="/assets/css/alt.css">
-<!-- Set content to your form service URL (e.g. https://formspree.io/f/xxxxxxxx). While it is empty the form tells
-     visitors it is not connected, instead of pretending to send. -->
-<meta name="inquiry-endpoint" content="">
+<!-- Inquiries are emailed via FormSubmit (formsubmit.co) to the address in this URL.
+     First submission sends Paige a one-time activation email; click it, then use the random alias FormSubmit gives her
+     (replace the email below with it) so the address is not exposed in the page source. -->
+<meta name="inquiry-endpoint" content="https://formsubmit.co/ajax/pmh@highlyalignedtherapy.com">
 </head>
 <body class="has-announce page-consultation page-alt">
 <div id="intro" aria-hidden="true">
@@ -133,7 +134,7 @@
               <p class="error" id="e-coverage"></p>
             </div>
 
-            <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+            <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label><input type="text" name="_honey" tabindex="-1" autocomplete="off"></div>
 
             <div class="submit-row">
               <button class="btn btn--solid" type="submit"><span>Send Inquiry</span></button>
