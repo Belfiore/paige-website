@@ -673,7 +673,7 @@ def alt_home():
              '<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/nunito-latin.woff2" crossorigin>\n'
              '<link rel="stylesheet" href="/assets/css/alt.css">\n')
 
-    return head("Highly Aligned Therapy — story", desc, extra) + f"""<body class="has-announce page-alt">
+    return head("Highly Aligned Therapy", desc, extra) + f"""<body class="has-announce page-alt">
 {INTRO}
 <div class="progress" aria-hidden="true"></div>
 {header("home", base)}
