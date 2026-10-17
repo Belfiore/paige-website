@@ -470,27 +470,33 @@ FORM_LABELS = ["Name", "First Name", "Last Name", "Email", "Preferred Day", "Sho
                "Preferred Time", "in Eastern Time", "Phone Number", "Send Inquiry"]
 
 
-# Preferred-time chips. Edit these to match the hours Paige actually offers (24h clock, minutes).
-SLOT_START, SLOT_END, SLOT_STEP = 8 * 60, 19 * 60 + 30, 30   # 8:00 AM .. 7:30 PM, every 30 min
+# Preferred time: step 1 = part of the day, step 2 = a few hour choices (only for the chosen part).
+# Edit WINDOWS to match the hours Paige actually offers (24h clock; lo/hi = first/last hour offered).
+WINDOWS = [("morning", "Morning", 8, 11), ("afternoon", "Afternoon", 12, 16), ("evening", "Evening", 17, 19)]
 
 
-def _slot_label(m):
-    h, mi = divmod(m, 60)
-    return f"{((h + 11) % 12) + 1}:{mi:02d} {'AM' if h < 12 else 'PM'}"
+def _hour_label(h):
+    return f"{((h + 11) % 12) + 1}:00 {'AM' if h < 12 else 'PM'}"
+
+
+def _range_label(lo, hi):
+    f = lambda h: f"{((h + 11) % 12) + 1} {'AM' if h < 12 else 'PM'}"
+    return f"{f(lo)} – {f(hi + 1)}"
 
 
 def time_picker_html():
-    groups = [("Morning", 0, 12 * 60), ("Afternoon", 12 * 60, 17 * 60), ("Evening", 17 * 60, 24 * 60)]
-    out = []
-    for name, lo, hi in groups:
-        slots = [m for m in range(SLOT_START, SLOT_END + 1, SLOT_STEP) if lo <= m < hi]
-        if not slots:
-            continue
-        chips = "".join(
-            f'<label class="slot"><input type="radio" name="slot" value="{m // 60:02d}:{m % 60:02d}" data-label="{_slot_label(m)}"><span>{_slot_label(m)}</span></label>'
-            for m in slots)
-        out.append(f'<p class="slot-group-title">{name}</p><div class="slots">{chips}</div>')
-    return "\n                ".join(out)
+    wins, panels = [], []
+    for key, name, lo, hi in WINDOWS:
+        rng = _range_label(lo, hi)
+        wins.append(f'<label class="win"><input type="radio" name="window" value="{key}"><span><strong>{name}</strong><small>{rng}</small></span></label>')
+        chips = (f'<label class="slot slot--any"><input type="radio" name="slot" value="any-{key}" data-label="Any time in the {name.lower()}" '
+                 f'data-readable="{name} ({rng}), any time, Eastern Time"><span>Any time</span></label>')
+        chips += "".join(
+            f'<label class="slot"><input type="radio" name="slot" value="{h:02d}:00" data-label="{_hour_label(h)}"><span>{_hour_label(h)}</span></label>'
+            for h in range(lo, hi + 1))
+        panels.append(f'<div class="slot-panel" data-window="{key}" hidden><p class="slot-group-title">{name}: pick a time</p><div class="slots">{chips}</div></div>')
+    return ('<div class="windows" role="radiogroup" aria-label="Part of the day">' + "".join(wins) + "</div>\n                "
+            + '<div class="slot-panels">' + "".join(panels) + "</div>")
 
 
 def consultation():
@@ -573,7 +579,7 @@ def consultation():
               <span class="field-label" id="l-time">{E(FORM_LABELS[6])} {req}</span>
               <p class="hint" id="h-time">{E(FORM_LABELS[7])}</p>
               <input type="hidden" id="f-time" name="time" data-validate aria-invalid="false">
-              <div class="time-picker" role="radiogroup" aria-labelledby="l-time" aria-describedby="h-time e-time" aria-invalid="false">
+              <div class="time-picker" role="group" aria-labelledby="l-time" aria-describedby="h-time e-time" aria-invalid="false">
                 {time_picker_html()}
               </div>
               <p class="time-summary" id="time-summary" aria-live="polite"></p>

@@ -425,11 +425,19 @@
       i.addEventListener("input", () => { if (i.getAttribute("aria-invalid") === "true") check(i); });
     });
 
-    // time chips -> hidden "time" field + a plain-language summary
+    // step 1: part of the day -> reveals that part's hours.  step 2: an hour (or "Any time") -> hidden "time" field
     const timeHidden = $("#f-time");
     const timeSummary = $("#time-summary");
+    const panels = $$(".slot-panel", form);
+    $$(".win input", form).forEach((w) => w.addEventListener("change", () => {
+      panels.forEach((p) => { p.hidden = p.dataset.window !== w.value; });
+      $$(".slot input", form).forEach((r) => { r.checked = false; });
+      timeHidden.value = ""; delete timeHidden.dataset.readable;
+      timeSummary.textContent = "";
+    }));
     $$(".slot input", form).forEach((r) => r.addEventListener("change", () => {
       timeHidden.value = r.value;
+      timeHidden.dataset.readable = r.dataset.readable || "";
       timeSummary.textContent = "You picked " + r.dataset.label + " Eastern Time";
       check(timeHidden);
     }));
@@ -446,13 +454,13 @@
       const bad = inputs.filter((i) => !check(i));
       if (bad.length) {
         showAlert("Please fix the highlighted fields and try again.");
-        (bad[0].type === "hidden" ? $(".slot input", form) : bad[0]).focus();
+        (bad[0].type === "hidden" ? $(".win input", form) : bad[0]).focus();
         return;
       }
       const data = new FormData(form);
       if (data.get("_gotcha")) return; // honeypot
-      data.delete("slot"); // helper radios only; the chosen value travels as "time"
-      data.set("preferred_time_readable", fmtTime(data.get("time")));
+      data.delete("slot"); data.delete("window"); // helper radios only; the chosen value travels as "time"
+      data.set("preferred_time_readable", timeHidden.dataset.readable || fmtTime(data.get("time")));
       data.set("_subject", "Consultation Inquiry");
       data.set("_template", "table");
       data.set("_captcha", "false");
