@@ -495,6 +495,7 @@ def consultation():
         </div>
 
         <div class="form-card" data-reveal style="--delay:.1s">
+          <p class="email-note">Send me an email at <a href="mailto:pmh@highlyalignedtherapy.com">pmh@highlyalignedtherapy.com</a> or use the form below, both work.</p>
           <p class="form-intro">Prefer to write first? Fill this out and I’ll be in touch. Fields marked (required) must be completed.</p>
           <div class="form-alert" role="alert" tabindex="-1"></div>
 

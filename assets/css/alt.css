@@ -266,3 +266,8 @@ body.page-alt {
 .card:hover .card-visual--shape .shape { transform: none; }
 .bg-sky { background: var(--sky); } .bg-blush { background: #ffb7a6; } .bg-butter { background: var(--butter); } .bg-saffron { background: var(--saffron); }
 @media (prefers-reduced-motion: reduce) { .card-visual--shape .shape { animation: none; } }
+
+/* "email me or use the form" callout at the top of the inquiry card */
+.email-note { margin: 0 0 1.2rem; padding: 0.9rem 1.1rem; max-width: none; border: 1.5px solid var(--ink); border-radius: 14px; background: rgba(255, 227, 150, 0.55); font-weight: 600; line-height: 1.5; }
+.email-note a { color: var(--ink); font-weight: 800; text-underline-offset: 0.2em; overflow-wrap: anywhere; }
+.email-note a:hover { text-decoration-thickness: 2px; }

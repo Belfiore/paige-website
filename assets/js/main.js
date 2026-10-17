@@ -435,6 +435,8 @@
         alertBox.classList.remove("show");
         const formIntro = $(".form-intro");
         if (formIntro) formIntro.hidden = true;
+        const emailNote = $(".email-note");
+        if (emailNote) emailNote.hidden = true;
         thanks.classList.add("show");
         thanks.setAttribute("tabindex", "-1");
         thanks.focus();
